@@ -4,7 +4,6 @@ import { Badge } from "@/components/ui/badge";
 import { 
   Image, 
   MapPin, 
-  Download, 
   WifiOff, 
   LayoutDashboard, 
   Camera,
@@ -37,15 +36,8 @@ interface Location {
   date: string;
 }
 
-interface Widget {
-  id: string;
-  name: string;
-  type: "chart" | "summary" | "list";
-  active: boolean;
-}
-
 export const EnhancedUI = ({ onBack }: { onBack: () => void }) => {
-  const [activeTab, setActiveTab] = useState<"receipts" | "locations" | "offline" | "export" | "widgets">("receipts");
+  const [activeTab, setActiveTab] = useState<"receipts" | "locations" | "offline">("receipts");
   const [selectedReceipt, setSelectedReceipt] = useState<Receipt | null>(null);
   
   // Function to get icon for expense category
@@ -111,37 +103,23 @@ export const EnhancedUI = ({ onBack }: { onBack: () => void }) => {
       expenseName: "Dinner at Zomato",
       location: "Delhi, India",
       coordinates: { lat: 28.6139, lng: 77.2090 },
-      date: "2024-06-15"
+      date: new Date().toISOString().split('T')[0]
     },
     {
       id: "2",
       expenseName: "Grocery Shopping",
       location: "Mumbai, India",
       coordinates: { lat: 19.0760, lng: 72.8777 },
-      date: "2024-06-10"
+      date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
     },
     {
       id: "3",
       expenseName: "Movie Tickets",
       location: "Bangalore, India",
       coordinates: { lat: 12.9716, lng: 77.5946 },
-      date: "2024-06-05"
+      date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
     }
   ];
-
-  // Sample data for dashboard widgets
-  const widgets: Widget[] = [
-    { id: "1", name: "Spending Chart", type: "chart", active: true },
-    { id: "2", name: "Recent Expenses", type: "list", active: true },
-    { id: "3", name: "Monthly Summary", type: "summary", active: false },
-    { id: "4", name: "Category Breakdown", type: "chart", active: true }
-  ];
-
-  // Toggle widget activation
-  const toggleWidget = (id: string) => {
-    // In a real app, this would update the widget state
-    console.log(`Toggled widget ${id}`);
-  };
 
   return (
     <div className="min-h-screen relative overflow-hidden p-6">
@@ -182,22 +160,6 @@ export const EnhancedUI = ({ onBack }: { onBack: () => void }) => {
           >
             <WifiOff className="w-4 h-4 mr-2" />
             Offline Mode
-          </Button>
-          <Button 
-            variant={activeTab === "export" ? "default" : "outline"} 
-            onClick={() => setActiveTab("export")}
-            className={activeTab === "export" ? "glass-strong" : "glass"}
-          >
-            <Download className="w-4 h-4 mr-2" />
-            Data Export
-          </Button>
-          <Button 
-            variant={activeTab === "widgets" ? "default" : "outline"} 
-            onClick={() => setActiveTab("widgets")}
-            className={activeTab === "widgets" ? "glass-strong" : "glass"}
-          >
-            <LayoutDashboard className="w-4 h-4 mr-2" />
-            Dashboard Widgets
           </Button>
         </div>
 
@@ -340,100 +302,6 @@ export const EnhancedUI = ({ onBack }: { onBack: () => void }) => {
                 </Button>
                 <Button variant="outline" className="glass">
                   Sync Now
-                </Button>
-              </div>
-            </Card>
-          </div>
-        )}
-
-        {/* Data Export */}
-        {activeTab === "export" && (
-          <div className="space-y-6">
-            <Card className="glass-strong p-6 hover-scale">
-              <div className="flex items-center gap-3 mb-4">
-                <FileText className="w-8 h-8 text-primary" />
-                <h2 className="text-xl font-display gradient-text">Data Export</h2>
-              </div>
-              <p className="text-muted-foreground mb-6">
-                Export your expense data in various formats for analysis or record keeping
-              </p>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Card className="glass p-6 text-center hover-scale cursor-pointer">
-                  <FileText className="w-12 h-12 text-primary mx-auto mb-3" />
-                  <h3 className="font-semibold mb-2">CSV Export</h3>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Export data in comma-separated values format
-                  </p>
-                  <Button className="w-full glass-strong">
-                    Export CSV
-                  </Button>
-                </Card>
-                
-                <Card className="glass p-6 text-center hover-scale cursor-pointer">
-                  <FileText className="w-12 h-12 text-secondary mx-auto mb-3" />
-                  <h3 className="font-semibold mb-2">PDF Report</h3>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Generate detailed PDF reports with charts
-                  </p>
-                  <Button className="w-full glass-strong">
-                    Export PDF
-                  </Button>
-                </Card>
-                
-                <Card className="glass p-6 text-center hover-scale cursor-pointer">
-                  <Database className="w-12 h-12 text-accent mx-auto mb-3" />
-                  <h3 className="font-semibold mb-2">Backup</h3>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Create a complete backup of your data
-                  </p>
-                  <Button className="w-full glass-strong">
-                    Create Backup
-                  </Button>
-                </Card>
-              </div>
-            </Card>
-          </div>
-        )}
-
-        {/* Dashboard Widgets */}
-        {activeTab === "widgets" && (
-          <div className="space-y-6">
-            <Card className="glass-strong p-6 hover-scale">
-              <div className="flex items-center gap-3 mb-4">
-                <LayoutDashboard className="w-8 h-8 text-primary" />
-                <h2 className="text-xl font-display gradient-text">Dashboard Widgets</h2>
-              </div>
-              <p className="text-muted-foreground mb-6">
-                Customize your dashboard with widgets that show the information most important to you
-              </p>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {widgets.map((widget) => (
-                  <Card key={widget.id} className="glass p-4 hover-scale">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <div className="font-semibold">{widget.name}</div>
-                        <div className="text-sm text-muted-foreground capitalize">
-                          {widget.type} widget
-                        </div>
-                      </div>
-                      <Button 
-                        variant={widget.active ? "default" : "outline"}
-                        onClick={() => toggleWidget(widget.id)}
-                        className={widget.active ? "glass-strong" : "glass"}
-                      >
-                        {widget.active ? "Active" : "Activate"}
-                      </Button>
-                    </div>
-                  </Card>
-                ))}
-              </div>
-              
-              <div className="mt-6 pt-6 border-t border-border">
-                <Button className="glass-strong hover-scale">
-                  <Palette className="w-4 h-4 mr-2" />
-                  Customize Widget Layout
                 </Button>
               </div>
             </Card>
