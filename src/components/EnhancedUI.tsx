@@ -140,7 +140,7 @@ export const EnhancedUI = ({ onBack }: { onBack: () => void }) => {
           <Button 
             variant={activeTab === "receipts" ? "default" : "outline"} 
             onClick={() => setActiveTab("receipts")}
-            className={activeTab === "receipts" ? "glass-strong" : "glass"}
+            className={`${activeTab === "receipts" ? "glass-strong" : "glass"} text-foreground`}
           >
             <Image className="w-4 h-4 mr-2" />
             Receipt Storage
@@ -148,7 +148,7 @@ export const EnhancedUI = ({ onBack }: { onBack: () => void }) => {
           <Button 
             variant={activeTab === "locations" ? "default" : "outline"} 
             onClick={() => setActiveTab("locations")}
-            className={activeTab === "locations" ? "glass-strong" : "glass"}
+            className={`${activeTab === "locations" ? "glass-strong" : "glass"} text-foreground`}
           >
             <MapPin className="w-4 h-4 mr-2" />
             Location Tracking
@@ -156,7 +156,7 @@ export const EnhancedUI = ({ onBack }: { onBack: () => void }) => {
           <Button 
             variant={activeTab === "offline" ? "default" : "outline"} 
             onClick={() => setActiveTab("offline")}
-            className={activeTab === "offline" ? "glass-strong" : "glass"}
+            className={`${activeTab === "offline" ? "glass-strong" : "glass"} text-foreground`}
           >
             <WifiOff className="w-4 h-4 mr-2" />
             Offline Mode

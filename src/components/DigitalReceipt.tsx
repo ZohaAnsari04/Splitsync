@@ -182,7 +182,7 @@ export const DigitalReceipt = ({ receipt, onClose }: DigitalReceiptProps) => {
         <div className="p-6 border-t border-border flex flex-wrap gap-3">
           <Button
             onClick={handlePrint}
-            className="flex-1 glass-strong hover-scale"
+            className="flex-1 glass-strong hover-scale text-foreground"
             onMouseEnter={() => playHover()}
           >
             <Printer className="w-4 h-4 mr-2" />
@@ -209,10 +209,10 @@ export const DigitalReceipt = ({ receipt, onClose }: DigitalReceiptProps) => {
         </div>
 
         {isPrinting && (
-          <div className="fixed inset-0 bg-white z-50 flex items-center justify-center">
+          <div className="fixed inset-0 bg-white dark:bg-gray-900 z-50 flex items-center justify-center">
             <div className="text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-              <p>Preparing receipt for printing...</p>
+              <p className="text-gray-800 dark:text-gray-200">Preparing receipt for printing...</p>
             </div>
           </div>
         )}
