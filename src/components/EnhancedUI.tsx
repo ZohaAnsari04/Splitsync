@@ -173,7 +173,7 @@ export const EnhancedUI = ({ onBack }: { onBack: () => void }) => {
                   Expense Receipts
                 </h2>
               </div>
-              <p className="text-muted-foreground mb-4">
+              <p className="text-muted-foreground text-foreground mb-4">
                 Store and manage receipts for all your expenses
               </p>
               
@@ -183,7 +183,7 @@ export const EnhancedUI = ({ onBack }: { onBack: () => void }) => {
                     <div className="aspect-video bg-secondary/20 rounded-lg mb-3 flex items-center justify-center">
                       {getExpenseIcon(receipt.expenseName)}
                     </div>
-                    <div className="font-semibold">{receipt.expenseName}</div>
+                    <div className="font-semibold text-foreground">{receipt.expenseName}</div>
                     <div className="text-sm text-muted-foreground">₹{receipt.amount.toLocaleString()}</div>
                     <div className="text-xs text-muted-foreground mt-1">
                       {new Date(receipt.date).toLocaleDateString()}
@@ -192,7 +192,7 @@ export const EnhancedUI = ({ onBack }: { onBack: () => void }) => {
                       <Button 
                         size="sm" 
                         variant="outline" 
-                        className="flex-1 glass"
+                        className="flex-1 glass text-foreground"
                         onClick={() => setSelectedReceipt(receipt)}
                       >
                         View
@@ -215,7 +215,7 @@ export const EnhancedUI = ({ onBack }: { onBack: () => void }) => {
                   Expense Locations
                 </h2>
               </div>
-              <p className="text-muted-foreground mb-4">
+              <p className="text-muted-foreground text-foreground mb-4">
                 Track where your expenses occurred with integrated maps
               </p>
               
@@ -259,7 +259,7 @@ export const EnhancedUI = ({ onBack }: { onBack: () => void }) => {
                 <WifiOff className="w-8 h-8 text-primary" />
                 <h2 className="text-xl font-display gradient-text">Offline Mode</h2>
               </div>
-              <p className="text-muted-foreground mb-4">
+              <p className="text-muted-foreground text-foreground mb-4">
                 Continue using SplitSync even without an internet connection. All data will sync automatically when you're back online.
               </p>
               
