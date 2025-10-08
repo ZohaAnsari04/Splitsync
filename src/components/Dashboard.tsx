@@ -47,6 +47,7 @@ export const Dashboard = ({
   const { theme, resolvedTheme } = useTheme();
   const { playClick, playHover } = useSound();
   const [showPaymentReminder, setShowPaymentReminder] = useState(false);
+  const [paymentKey, setPaymentKey] = useState(0); // Key to force re-render
   
   useEffect(() => {
     console.log("Dashboard - Current theme:", theme);
@@ -171,6 +172,7 @@ export const Dashboard = ({
             variant="outline"
             onClick={() => {
               playClick();
+              setPaymentKey(prev => prev + 1); // Force re-render to get new meme
               setShowPaymentReminder(true);
             }}
             className="h-24 text-lg font-display glass hover-scale glow-purple border-2 border-primary/30 hover:border-primary/60 transition-all relative overflow-hidden"
@@ -251,6 +253,7 @@ export const Dashboard = ({
       {/* Payment Reminder Modal */}
       {showPaymentReminder && (
         <PaymentReminder
+          key={paymentKey} // This forces a re-render with a new meme
           debtorName="You"
           creditorName="Alice"
           amount={300}

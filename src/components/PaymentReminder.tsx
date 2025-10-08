@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { X, AlertTriangle, Zap } from "lucide-react";
+import { X, AlertTriangle, Zap, Wallet, CreditCard, IndianRupee, Timer, Calendar, User } from "lucide-react";
 import { useSound } from "@/hooks/useSound";
 
 interface PaymentReminderProps {
@@ -21,26 +21,47 @@ export const PaymentReminder = ({
 }: PaymentReminderProps) => {
   const { playClick, playHover } = useSound();
   const [showPaymentScreen, setShowPaymentScreen] = useState(false);
+  const [currentMeme, setCurrentMeme] = useState(0);
 
   const memes = [
     {
       id: 1,
       text: "Bro, you still owe me money? 😅",
-      image: "https://i.imgur.com/5XyNqXg.png"
+      icon: <Wallet className="w-16 h-16 text-primary" />,
+      color: "from-purple-500 to-pink-500"
     },
     {
       id: 2,
       text: "The bank account is crying 😭",
-      image: "https://i.imgur.com/8ZJz7ZM.png"
+      icon: <CreditCard className="w-16 h-16 text-blue-500" />,
+      color: "from-blue-500 to-cyan-500"
     },
     {
       id: 3,
       text: "Interest is compounding... 😬",
-      image: "https://i.imgur.com/9X9X9X9.png"
+      icon: <IndianRupee className="w-16 h-16 text-green-500" />,
+      color: "from-green-500 to-emerald-500"
+    },
+    {
+      id: 4,
+      text: "My wallet is feeling lonely without your money 💸",
+      icon: <Wallet className="w-16 h-16 text-yellow-500" />,
+      color: "from-yellow-500 to-orange-500"
+    },
+    {
+      id: 5,
+      text: "Even the calendar is judging you 📅",
+      icon: <Calendar className="w-16 h-16 text-red-500" />,
+      color: "from-red-500 to-pink-500"
     }
   ];
 
-  const randomMeme = memes[Math.floor(Math.random() * memes.length)];
+  // Select a new random meme each time the component is shown
+  useEffect(() => {
+    setCurrentMeme(Math.floor(Math.random() * memes.length));
+  }, []);
+
+  const randomMeme = memes[currentMeme];
 
   if (showPaymentScreen) {
     return (
@@ -90,7 +111,7 @@ export const PaymentReminder = ({
                     </div>
                   </div>
                   <Button 
-                    className="w-full glass-strong hover-scale"
+                    className="w-full glass-strong hover-scale text-foreground font-display py-6 text-lg"
                     onClick={() => {
                       playClick();
                       // In a real app, this would initiate UPI payment
@@ -163,21 +184,11 @@ export const PaymentReminder = ({
               <p className="text-3xl font-bold gradient-text">₹{amount.toLocaleString()}</p>
             </div>
 
-            <Card className="glass p-4 text-center">
-              <img 
-                src={randomMeme.image} 
-                alt="Payment reminder meme" 
-                className="w-32 h-32 mx-auto mb-3 rounded-lg"
-                onError={(e) => {
-                  // Fallback to a default emoji if image fails to load
-                  e.currentTarget.style.display = 'none';
-                  const fallback = document.createElement('div');
-                  fallback.className = 'text-4xl mb-3';
-                  fallback.textContent = '💸';
-                  e.currentTarget.parentNode?.insertBefore(fallback, e.currentTarget);
-                }}
-              />
-              <p className="font-medium">{randomMeme.text}</p>
+            <Card className="glass p-6 text-center">
+              <div className={`w-32 h-32 rounded-full bg-gradient-to-br ${randomMeme.color} flex items-center justify-center mx-auto mb-4`}>
+                {randomMeme.icon}
+              </div>
+              <p className="font-medium text-lg">{randomMeme.text}</p>
             </Card>
 
             <div className="flex gap-3">
@@ -187,7 +198,7 @@ export const PaymentReminder = ({
                   playClick();
                   onDismiss();
                 }}
-                className="flex-1 glass"
+                className="flex-1 glass py-6 text-lg font-display"
                 onMouseEnter={() => playHover()}
               >
                 Later
@@ -197,7 +208,7 @@ export const PaymentReminder = ({
                   playClick();
                   setShowPaymentScreen(true);
                 }}
-                className="flex-1 glass-strong hover-scale"
+                className="flex-1 glass-strong hover-scale py-6 text-lg font-display text-foreground"
                 onMouseEnter={() => playHover()}
               >
                 Pay Now
