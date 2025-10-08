@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Plus, X, Users } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import { useSound } from "@/hooks/useSound";
 
 interface Participant {
@@ -25,7 +25,7 @@ export const ParticipantSelector = ({
   return (
     <div className="space-y-4">
       {/* Circular token ring */}
-      <div className="flex flex-wrap gap-3">
+      <div className="flex flex-wrap gap-3 items-start">
         {participants.map((participant, index) => (
           <div
             key={participant.id}
@@ -66,34 +66,11 @@ export const ParticipantSelector = ({
             playClick();
             onAddParticipant();
           }}
-          className="w-16 h-16 rounded-full glass-strong border-2 border-dashed border-primary/30 flex items-center justify-center hover-scale group transition-all hover:border-primary/60 text-foreground"
+          className="w-16 h-16 rounded-full glass-strong border-2 border-dashed border-primary/50 flex items-center justify-center hover-scale group transition-all hover:border-primary text-foreground relative z-10 flex-shrink-0"
           onMouseEnter={() => playHover()}
         >
-          <Plus className="w-6 h-6 text-primary group-hover:rotate-90 transition-transform" />
+          <Plus className="w-8 h-8 text-primary group-hover:rotate-90 transition-transform" />
         </button>
-      </div>
-
-      {/* Smart group suggestions */}
-      <div className="glass p-3 rounded-lg border border-primary/20">
-        <div className="flex items-center gap-2 mb-2">
-          <Users className="w-4 h-4 text-primary" />
-          <span className="text-sm font-semibold">Quick Groups</span>
-        </div>
-        
-        <div className="flex gap-2 flex-wrap">
-          {["Roommates", "Office", "Travel Squad"].map((group) => (
-            <Button
-              key={group}
-              variant="outline"
-              size="sm"
-              className="glass hover-scale text-xs"
-              onClick={() => playClick()}
-              onMouseEnter={() => playHover()}
-            >
-              {group}
-            </Button>
-          ))}
-        </div>
       </div>
     </div>
   );

@@ -7,6 +7,7 @@ import heroBg from "@/assets/hero-bg.png";
 import { useTheme } from "next-themes";
 import { useEffect } from "react";
 import { useSound } from "@/hooks/useSound";
+import { BalanceSummary } from "./BalanceSummary";
 
 interface DashboardProps {
   onAddExpense: () => void;
@@ -49,6 +50,13 @@ export const Dashboard = ({
     console.log("Dashboard - Current theme:", theme);
     console.log("Dashboard - Resolved theme:", resolvedTheme);
   }, [theme, resolvedTheme]);
+
+  // Sample balance data - in a real app, this would be calculated from expenses
+  const sampleBalances = [
+    { id: 1, from: "You", to: "Alice", amount: 300 },
+    { id: 2, from: "Bob", to: "You", amount: 150 },
+    { id: 3, from: "Alice", to: "Bob", amount: 75 },
+  ];
 
   // Feature categories for navigation
   const featureCategories = [
@@ -184,7 +192,7 @@ export const Dashboard = ({
         </div>
 
         {/* Recent Activity */}
-        <Card className="glass-strong p-6 animate-slide-up border-primary/20" style={{ animationDelay: '0.3s' }}>
+        <Card className="glass-strong p-6 animate-slide-up border-primary/20 mb-8" style={{ animationDelay: '0.3s' }}>
           <h2 className="text-xl font-display mb-4 gradient-text">Recent Activity</h2>
           
           <div className="space-y-3">
@@ -218,6 +226,9 @@ export const Dashboard = ({
             ))}
           </div>
         </Card>
+
+        {/* Balance Summary */}
+        <BalanceSummary balances={sampleBalances} />
       </div>
     </div>
   );
