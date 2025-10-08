@@ -26,6 +26,12 @@ interface DashboardProps {
     split: number;
     status: "pending" | "settled";
   }[];
+  balances?: {
+    id: number;
+    from: string;
+    to: string;
+    amount: number;
+  }[];
 }
 
 export const Dashboard = ({ 
@@ -42,6 +48,11 @@ export const Dashboard = ({
     { name: "Dinner at Zomato", amount: "₹1,200", split: 4, status: "pending" },
     { name: "Movie Tickets", amount: "₹800", split: 2, status: "settled" },
     { name: "Grocery Shopping", amount: "₹2,450", split: 3, status: "pending" },
+  ],
+  balances = [
+    { id: 1, from: "You", to: "Alice", amount: 300 },
+    { id: 2, from: "Bob", to: "You", amount: 150 },
+    { id: 3, from: "Alice", to: "Bob", amount: 75 },
   ]
 }: DashboardProps) => {
   const { theme, resolvedTheme } = useTheme();
@@ -53,13 +64,6 @@ export const Dashboard = ({
     console.log("Dashboard - Current theme:", theme);
     console.log("Dashboard - Resolved theme:", resolvedTheme);
   }, [theme, resolvedTheme]);
-
-  // Sample balance data - in a real app, this would be calculated from expenses
-  const sampleBalances = [
-    { id: 1, from: "You", to: "Alice", amount: 300 },
-    { id: 2, from: "Bob", to: "You", amount: 150 },
-    { id: 3, from: "Alice", to: "Bob", amount: 75 },
-  ];
 
   // Feature categories for navigation
   const featureCategories = [
@@ -248,7 +252,7 @@ export const Dashboard = ({
         </Card>
 
         {/* Balance Summary */}
-        <BalanceSummary balances={sampleBalances} />
+        <BalanceSummary balances={balances} />
       </div>
       
       {/* Payment Reminder Modal */}

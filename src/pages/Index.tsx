@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { SplashScreen } from "@/components/SplashScreen";
 import { Dashboard } from "@/components/Dashboard";
 import { AddExpenseModal } from "@/components/AddExpenseModal";
@@ -12,6 +12,7 @@ import { SecurityPrivacy } from "@/components/SecurityPrivacy";
 import { AccessibilityImprovements } from "@/components/AccessibilityImprovements";
 import { NavigationMenu } from "@/components/NavigationMenu";
 import { useSound } from "@/hooks/useSound";
+import { toast } from "sonner";
 
 type View = "splash" | "dashboard" | "analytics" | "gamification" | "financial-insights" | "enhanced-ui" | "mobile-features" | "advanced-gamification" | "security-privacy" | "accessibility-improvements";
 
@@ -23,6 +24,24 @@ interface RecentActivity {
   status: "pending" | "settled";
 }
 
+// Define the balance type
+interface Balance {
+  id: number;
+  from: string;
+  to: string;
+  amount: number;
+}
+
+// Define the expense type
+interface Expense {
+  id: string;
+  name: string;
+  amount: number;
+  split: number;
+  participants: string[];
+  date: Date;
+}
+
 const Index = () => {
   const [currentView, setCurrentView] = useState<View>("splash");
   const [showAddExpense, setShowAddExpense] = useState(false);
@@ -31,7 +50,13 @@ const Index = () => {
     { name: "Movie Tickets", amount: "₹800", split: 2, status: "settled" },
     { name: "Grocery Shopping", amount: "₹2,450", split: 3, status: "pending" },
   ]);
-  const { playClick } = useSound();
+  const [balances, setBalances] = useState<Balance[]>([
+    { id: 1, from: "You", to: "Alice", amount: 300 },
+    { id: 2, from: "Bob", to: "You", amount: 150 },
+    { id: 3, from: "Alice", to: "Bob", amount: 75 },
+  ]);
+  const [expenses, setExpenses] = useState<Expense[]>([]);
+  const { playClick, playNotification } = useSound();
 
   // Function to add a new expense to recent activity
   const addExpenseToActivity = (name: string, amount: number, split: number) => {
@@ -43,6 +68,53 @@ const Index = () => {
     };
     
     setRecentActivity(prev => [newActivity, ...prev.slice(0, 9)]); // Keep only the last 10 activities
+    
+    // Add the expense to the expenses list
+    const newExpense: Expense = {
+      id: Date.now().toString(),
+      name,
+      amount,
+      split,
+      participants: ["You", "Alice", "Bob"], // Default participants for now
+      date: new Date()
+    };
+    
+    setExpenses(prev => [...prev, newExpense]);
+    
+    // Update balances based on the new expense
+    updateBalances(newExpense);
+    
+    // Show notification
+    toast.success(`New expense added: ${name} - ₹${amount.toLocaleString()}`, {
+      description: `Split among ${split} people`,
+      duration: 5000,
+    });
+    
+    // Play notification sound
+    playNotification();
+  };
+
+  // Function to update balances when a new expense is added
+  const updateBalances = (expense: Expense) => {
+    // This is a simplified calculation - in a real app, this would be more complex
+    // For now, we'll just simulate some balance changes
+    
+    // Simulate that "You" owe more to Alice
+    const updatedBalances = [...balances];
+    const aliceBalance = updatedBalances.find(b => b.from === "You" && b.to === "Alice");
+    
+    if (aliceBalance) {
+      aliceBalance.amount += expense.amount / expense.split;
+    } else {
+      updatedBalances.push({
+        id: updatedBalances.length + 1,
+        from: "You",
+        to: "Alice",
+        amount: expense.amount / expense.split
+      });
+    }
+    
+    setBalances(updatedBalances);
   };
 
   const renderView = () => {
@@ -79,6 +151,7 @@ const Index = () => {
             onViewSecurityPrivacy={() => setCurrentView("security-privacy")}
             onViewAccessibilityImprovements={() => setCurrentView("accessibility-improvements")}
             recentActivity={recentActivity}
+            balances={balances}
           />
         );
     }
