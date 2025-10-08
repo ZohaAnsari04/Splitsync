@@ -12,6 +12,7 @@ import {
   AlertCircle
 } from "lucide-react";
 import { useState } from "react";
+import { useSound } from "@/hooks/useSound";
 
 interface AccessibilitySetting {
   id: string;
@@ -26,6 +27,7 @@ export const AccessibilityImprovements = ({ onBack }: { onBack: () => void }) =>
   const [voiceCommands, setVoiceCommands] = useState(true);
   const [screenReader, setScreenReader] = useState(false);
   const [keyboardNav, setKeyboardNav] = useState(true);
+  const { playClick, playHover } = useSound();
   
   // Accessibility settings
   const accessibilitySettings: AccessibilitySetting[] = [
@@ -61,6 +63,7 @@ export const AccessibilityImprovements = ({ onBack }: { onBack: () => void }) =>
 
   // Toggle accessibility setting
   const toggleSetting = (id: string) => {
+    playClick();
     switch (id) {
       case "1":
         setVoiceCommands(!voiceCommands);
@@ -86,14 +89,26 @@ export const AccessibilityImprovements = ({ onBack }: { onBack: () => void }) =>
             <h1 className="text-3xl font-display gradient-text">Accessibility Improvements</h1>
             <p className="text-muted-foreground">Enhance usability for all users</p>
           </div>
-          <Button onClick={onBack} variant="outline" className="glass hover-scale">
+          <Button 
+            onClick={() => {
+              playClick();
+              onBack();
+            }} 
+            variant="outline" 
+            className="glass hover-scale"
+            onMouseEnter={() => playHover()}
+          >
             Back to Dashboard
           </Button>
         </div>
 
         {/* Accessibility Status */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <Card className="glass p-4 text-center hover-scale">
+          <Card 
+            className="glass p-4 text-center hover-scale cursor-pointer"
+            onClick={() => playClick()}
+            onMouseEnter={() => playHover()}
+          >
             <Mic className="w-8 h-8 text-primary mx-auto mb-2" />
             <div className="text-lg font-display font-bold gradient-text">
               {voiceCommands ? "Active" : "Inactive"}
@@ -101,7 +116,11 @@ export const AccessibilityImprovements = ({ onBack }: { onBack: () => void }) =>
             <div className="text-sm text-muted-foreground">Voice Commands</div>
           </Card>
           
-          <Card className="glass p-4 text-center hover-scale">
+          <Card 
+            className="glass p-4 text-center hover-scale cursor-pointer"
+            onClick={() => playClick()}
+            onMouseEnter={() => playHover()}
+          >
             <Eye className="w-8 h-8 text-secondary mx-auto mb-2" />
             <div className="text-lg font-display font-bold gradient-text">
               {screenReader ? "Active" : "Inactive"}
@@ -109,7 +128,11 @@ export const AccessibilityImprovements = ({ onBack }: { onBack: () => void }) =>
             <div className="text-sm text-muted-foreground">Screen Reader</div>
           </Card>
           
-          <Card className="glass p-4 text-center hover-scale">
+          <Card 
+            className="glass p-4 text-center hover-scale cursor-pointer"
+            onClick={() => playClick()}
+            onMouseEnter={() => playHover()}
+          >
             <Contrast className="w-8 h-8 text-accent mx-auto mb-2" />
             <div className="text-lg font-display font-bold gradient-text">
               {highContrast ? "Active" : "Inactive"}
@@ -117,7 +140,11 @@ export const AccessibilityImprovements = ({ onBack }: { onBack: () => void }) =>
             <div className="text-sm text-muted-foreground">High Contrast</div>
           </Card>
           
-          <Card className="glass p-4 text-center hover-scale">
+          <Card 
+            className="glass p-4 text-center hover-scale cursor-pointer"
+            onClick={() => playClick()}
+            onMouseEnter={() => playHover()}
+          >
             <Keyboard className="w-8 h-8 text-purple-500 mx-auto mb-2" />
             <div className="text-lg font-display font-bold gradient-text">
               {keyboardNav ? "Active" : "Inactive"}
@@ -140,19 +167,35 @@ export const AccessibilityImprovements = ({ onBack }: { onBack: () => void }) =>
             <div>
               <h3 className="font-semibold mb-3">Available Commands</h3>
               <div className="space-y-3">
-                <div className="p-3 glass rounded">
+                <div 
+                  className="p-3 glass rounded cursor-pointer hover-scale"
+                  onClick={() => playClick()}
+                  onMouseEnter={() => playHover()}
+                >
                   <div className="font-mono text-sm">"Add new expense"</div>
                   <div className="text-sm text-muted-foreground">Create a new expense entry</div>
                 </div>
-                <div className="p-3 glass rounded">
+                <div 
+                  className="p-3 glass rounded cursor-pointer hover-scale"
+                  onClick={() => playClick()}
+                  onMouseEnter={() => playHover()}
+                >
                   <div className="font-mono text-sm">"Show dashboard"</div>
                   <div className="text-sm text-muted-foreground">Navigate to the main dashboard</div>
                 </div>
-                <div className="p-3 glass rounded">
+                <div 
+                  className="p-3 glass rounded cursor-pointer hover-scale"
+                  onClick={() => playClick()}
+                  onMouseEnter={() => playHover()}
+                >
                   <div className="font-mono text-sm">"View analytics"</div>
                   <div className="text-sm text-muted-foreground">Open financial insights</div>
                 </div>
-                <div className="p-3 glass rounded">
+                <div 
+                  className="p-3 glass rounded cursor-pointer hover-scale"
+                  onClick={() => playClick()}
+                  onMouseEnter={() => playHover()}
+                >
                   <div className="font-mono text-sm">"Search expenses"</div>
                   <div className="text-sm text-muted-foreground">Search through your expenses</div>
                 </div>
@@ -169,8 +212,12 @@ export const AccessibilityImprovements = ({ onBack }: { onBack: () => void }) =>
                   </div>
                   <Button 
                     variant={voiceCommands ? "default" : "outline"}
-                    onClick={() => setVoiceCommands(!voiceCommands)}
+                    onClick={() => {
+                      playClick();
+                      setVoiceCommands(!voiceCommands);
+                    }}
                     className={voiceCommands ? "glass-strong" : "glass"}
+                    onMouseEnter={() => playHover()}
                   >
                     {voiceCommands ? "Enabled" : "Disabled"}
                   </Button>
@@ -194,28 +241,44 @@ export const AccessibilityImprovements = ({ onBack }: { onBack: () => void }) =>
             <div>
               <h3 className="font-semibold mb-3">Optimization Features</h3>
               <div className="space-y-3">
-                <div className="flex items-center gap-2 p-3 glass rounded">
+                <div 
+                  className="flex items-center gap-2 p-3 glass rounded cursor-pointer hover-scale"
+                  onClick={() => playClick()}
+                  onMouseEnter={() => playHover()}
+                >
                   <CheckCircle className="w-5 h-5 text-green-500" />
                   <div>
                     <div className="font-semibold">Semantic HTML</div>
                     <div className="text-sm text-muted-foreground">Properly structured markup</div>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 p-3 glass rounded">
+                <div 
+                  className="flex items-center gap-2 p-3 glass rounded cursor-pointer hover-scale"
+                  onClick={() => playClick()}
+                  onMouseEnter={() => playHover()}
+                >
                   <CheckCircle className="w-5 h-5 text-green-500" />
                   <div>
                     <div className="font-semibold">ARIA Labels</div>
                     <div className="text-sm text-muted-foreground">Accessible rich internet applications</div>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 p-3 glass rounded">
+                <div 
+                  className="flex items-center gap-2 p-3 glass rounded cursor-pointer hover-scale"
+                  onClick={() => playClick()}
+                  onMouseEnter={() => playHover()}
+                >
                   <CheckCircle className="w-5 h-5 text-green-500" />
                   <div>
                     <div className="font-semibold">Focus Indicators</div>
                     <div className="text-sm text-muted-foreground">Visible keyboard focus</div>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 p-3 glass rounded">
+                <div 
+                  className="flex items-center gap-2 p-3 glass rounded cursor-pointer hover-scale"
+                  onClick={() => playClick()}
+                  onMouseEnter={() => playHover()}
+                >
                   <AlertCircle className="w-5 h-5 text-yellow-500" />
                   <div>
                     <div className="font-semibold">Contrast Ratios</div>
@@ -240,14 +303,34 @@ export const AccessibilityImprovements = ({ onBack }: { onBack: () => void }) =>
           <div className="flex flex-col md:flex-row gap-6">
             <div className="flex-1">
               <h3 className="font-semibold mb-3">Preview</h3>
-              <div className={`rounded-lg p-6 ${highContrast ? "bg-foreground text-background" : "bg-secondary/20"}`}>
+              <div 
+                className={`rounded-lg p-6 ${highContrast ? "bg-foreground text-background" : "bg-secondary/20"} cursor-pointer hover-scale`}
+                onClick={() => playClick()}
+                onMouseEnter={() => playHover()}
+              >
                 <div className="font-display text-xl mb-2">Sample Interface</div>
                 <div className="mb-4">This is how the interface appears with current settings</div>
                 <div className="flex gap-2">
-                  <Button variant={highContrast ? "secondary" : "default"} className={highContrast ? "" : "glass"}>
+                  <Button 
+                    variant={highContrast ? "secondary" : "default"} 
+                    className={highContrast ? "" : "glass"}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      playClick();
+                    }}
+                    onMouseEnter={() => playHover()}
+                  >
                     Primary Button
                   </Button>
-                  <Button variant="outline" className={highContrast ? "border-foreground text-foreground" : "glass"}>
+                  <Button 
+                    variant="outline" 
+                    className={highContrast ? "border-foreground text-foreground" : "glass"}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      playClick();
+                    }}
+                    onMouseEnter={() => playHover()}
+                  >
                     Secondary Button
                   </Button>
                 </div>
@@ -264,8 +347,12 @@ export const AccessibilityImprovements = ({ onBack }: { onBack: () => void }) =>
                   </div>
                   <Button 
                     variant={highContrast ? "default" : "outline"}
-                    onClick={() => setHighContrast(!highContrast)}
+                    onClick={() => {
+                      playClick();
+                      setHighContrast(!highContrast);
+                    }}
                     className={highContrast ? "glass-strong" : "glass"}
+                    onMouseEnter={() => playHover()}
                   >
                     {highContrast ? "Enabled" : "Disabled"}
                   </Button>
@@ -277,14 +364,22 @@ export const AccessibilityImprovements = ({ onBack }: { onBack: () => void }) =>
                     <Button 
                       variant="outline" 
                       className={`flex-1 ${!highContrast ? "glass-strong" : "glass"}`}
-                      onClick={() => setHighContrast(false)}
+                      onClick={() => {
+                        playClick();
+                        setHighContrast(false);
+                      }}
+                      onMouseEnter={() => playHover()}
                     >
                       Standard
                     </Button>
                     <Button 
                       variant="outline" 
                       className={`flex-1 ${highContrast ? "glass-strong" : "glass"}`}
-                      onClick={() => setHighContrast(true)}
+                      onClick={() => {
+                        playClick();
+                        setHighContrast(true);
+                      }}
+                      onMouseEnter={() => playHover()}
                     >
                       High
                     </Button>

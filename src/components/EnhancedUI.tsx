@@ -19,6 +19,7 @@ import {
 import { useState } from "react";
 import logo from "@/assets/logo.png";
 import { DigitalReceipt } from "./DigitalReceipt";
+import { useSound } from "@/hooks/useSound";
 
 interface Receipt {
   id: string;
@@ -39,6 +40,7 @@ interface Location {
 export const EnhancedUI = ({ onBack }: { onBack: () => void }) => {
   const [activeTab, setActiveTab] = useState<"receipts" | "locations" | "offline">("receipts");
   const [selectedReceipt, setSelectedReceipt] = useState<Receipt | null>(null);
+  const { playClick, playHover } = useSound();
   
   // Function to get icon for expense category
   const getExpenseIcon = (expenseName: string) => {
@@ -130,7 +132,15 @@ export const EnhancedUI = ({ onBack }: { onBack: () => void }) => {
             <h1 className="text-3xl font-display gradient-text">Enhanced UI/UX</h1>
             <p className="text-muted-foreground">Advanced features for better expense management</p>
           </div>
-          <Button onClick={onBack} variant="outline" className="glass hover-scale">
+          <Button 
+            onClick={() => {
+              playClick();
+              onBack();
+            }} 
+            variant="outline" 
+            className="glass hover-scale"
+            onMouseEnter={() => playHover()}
+          >
             Back to Dashboard
           </Button>
         </div>
@@ -139,24 +149,36 @@ export const EnhancedUI = ({ onBack }: { onBack: () => void }) => {
         <div className="flex flex-wrap gap-2 mb-6">
           <Button 
             variant={activeTab === "receipts" ? "default" : "outline"} 
-            onClick={() => setActiveTab("receipts")}
+            onClick={() => {
+              playClick();
+              setActiveTab("receipts");
+            }}
             className={`${activeTab === "receipts" ? "glass-strong" : "glass"} text-foreground`}
+            onMouseEnter={() => playHover()}
           >
             <Image className="w-4 h-4 mr-2" />
             Receipt Storage
           </Button>
           <Button 
             variant={activeTab === "locations" ? "default" : "outline"} 
-            onClick={() => setActiveTab("locations")}
+            onClick={() => {
+              playClick();
+              setActiveTab("locations");
+            }}
             className={`${activeTab === "locations" ? "glass-strong" : "glass"} text-foreground`}
+            onMouseEnter={() => playHover()}
           >
             <MapPin className="w-4 h-4 mr-2" />
             Location Tracking
           </Button>
           <Button 
             variant={activeTab === "offline" ? "default" : "outline"} 
-            onClick={() => setActiveTab("offline")}
+            onClick={() => {
+              playClick();
+              setActiveTab("offline");
+            }}
             className={`${activeTab === "offline" ? "glass-strong" : "glass"} text-foreground`}
+            onMouseEnter={() => playHover()}
           >
             <WifiOff className="w-4 h-4 mr-2" />
             Offline Mode
@@ -179,7 +201,15 @@ export const EnhancedUI = ({ onBack }: { onBack: () => void }) => {
               
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {receipts.map((receipt) => (
-                  <Card key={receipt.id} className="glass p-4 hover-scale">
+                  <Card 
+                    key={receipt.id} 
+                    className="glass p-4 hover-scale"
+                    onClick={() => {
+                      playClick();
+                      setSelectedReceipt(receipt);
+                    }}
+                    onMouseEnter={() => playHover()}
+                  >
                     <div className="aspect-video bg-secondary/20 rounded-lg mb-3 flex items-center justify-center">
                       {getExpenseIcon(receipt.expenseName)}
                     </div>
@@ -193,7 +223,12 @@ export const EnhancedUI = ({ onBack }: { onBack: () => void }) => {
                         size="sm" 
                         variant="outline" 
                         className="flex-1 glass text-foreground"
-                        onClick={() => setSelectedReceipt(receipt)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          playClick();
+                          setSelectedReceipt(receipt);
+                        }}
+                        onMouseEnter={() => playHover()}
                       >
                         View
                       </Button>
@@ -232,7 +267,12 @@ export const EnhancedUI = ({ onBack }: { onBack: () => void }) => {
               
               <div className="space-y-3">
                 {locations.map((location) => (
-                  <div key={location.id} className="flex items-center gap-3 p-3 glass rounded">
+                  <div 
+                    key={location.id} 
+                    className="flex items-center gap-3 p-3 glass rounded cursor-pointer hover-scale"
+                    onClick={() => playClick()}
+                    onMouseEnter={() => playHover()}
+                  >
                     <MapPin className="w-5 h-5 text-primary" />
                     <div className="flex-1">
                       <div className="font-semibold">{location.expenseName}</div>
@@ -241,7 +281,16 @@ export const EnhancedUI = ({ onBack }: { onBack: () => void }) => {
                     <div className="text-sm text-muted-foreground">
                       {new Date(location.date).toLocaleDateString()}
                     </div>
-                    <Button size="sm" variant="outline" className="glass">
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      className="glass"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        playClick();
+                      }}
+                      onMouseEnter={() => playHover()}
+                    >
                       View
                     </Button>
                   </div>
@@ -297,10 +346,19 @@ export const EnhancedUI = ({ onBack }: { onBack: () => void }) => {
               </div>
               
               <div className="flex gap-3">
-                <Button className="glass-strong hover-scale text-foreground">
+                <Button 
+                  className="glass-strong hover-scale text-foreground"
+                  onClick={() => playClick()}
+                  onMouseEnter={() => playHover()}
+                >
                   Enable Offline Mode
                 </Button>
-                <Button variant="outline" className="glass text-foreground">
+                <Button 
+                  variant="outline" 
+                  className="glass text-foreground"
+                  onClick={() => playClick()}
+                  onMouseEnter={() => playHover()}
+                >
                   Sync Now
                 </Button>
               </div>

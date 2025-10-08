@@ -45,7 +45,7 @@ export const Dashboard = ({
   ]
 }: DashboardProps) => {
   const { theme, resolvedTheme } = useTheme();
-  const { playClick, playHover } = useSound();
+  const { playClick, playHover, playNotification } = useSound();
   const [showPaymentReminder, setShowPaymentReminder] = useState(false);
   const [paymentKey, setPaymentKey] = useState(0); // Key to force re-render
   
@@ -172,6 +172,7 @@ export const Dashboard = ({
             variant="outline"
             onClick={() => {
               playClick();
+              playNotification(); // Play notification sound
               setPaymentKey(prev => prev + 1); // Force re-render to get new meme
               setShowPaymentReminder(true);
             }}

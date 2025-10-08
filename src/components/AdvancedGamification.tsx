@@ -14,6 +14,7 @@ import {
   Crown
 } from "lucide-react";
 import { useState } from "react";
+import { useSound } from "@/hooks/useSound";
 
 interface Streak {
   current: number;
@@ -51,6 +52,7 @@ interface Competition {
 
 export const AdvancedGamification = ({ onBack }: { onBack: () => void }) => {
   const [activeTab, setActiveTab] = useState<"streaks" | "badges" | "challenges" | "competitions">("streaks");
+  const { playClick, playHover } = useSound();
   
   // Streak data
   const streak: Streak = {
@@ -178,32 +180,56 @@ export const AdvancedGamification = ({ onBack }: { onBack: () => void }) => {
             <h1 className="text-3xl font-display gradient-text">Advanced Gamification</h1>
             <p className="text-muted-foreground">Level up your expense tracking with fun challenges</p>
           </div>
-          <Button onClick={onBack} variant="outline" className="glass hover-scale">
+          <Button 
+            onClick={() => {
+              playClick();
+              onBack();
+            }} 
+            variant="outline" 
+            className="glass hover-scale"
+            onMouseEnter={() => playHover()}
+          >
             Back to Dashboard
           </Button>
         </div>
 
         {/* Stats Overview */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <Card className="glass p-4 text-center hover-scale">
+          <Card 
+            className="glass p-4 text-center hover-scale cursor-pointer"
+            onClick={() => playClick()}
+            onMouseEnter={() => playHover()}
+          >
             <Flame className="w-8 h-8 text-orange-500 mx-auto mb-2" />
             <div className="text-2xl font-display font-bold gradient-text">{streak.current}</div>
             <div className="text-sm text-muted-foreground">Day Streak</div>
           </Card>
           
-          <Card className="glass p-4 text-center hover-scale">
+          <Card 
+            className="glass p-4 text-center hover-scale cursor-pointer"
+            onClick={() => playClick()}
+            onMouseEnter={() => playHover()}
+          >
             <Trophy className="w-8 h-8 text-yellow-500 mx-auto mb-2" />
             <div className="text-2xl font-display font-bold gradient-text">{badges.filter(b => b.earned).length}</div>
             <div className="text-sm text-muted-foreground">Badges Earned</div>
           </Card>
           
-          <Card className="glass p-4 text-center hover-scale">
+          <Card 
+            className="glass p-4 text-center hover-scale cursor-pointer"
+            onClick={() => playClick()}
+            onMouseEnter={() => playHover()}
+          >
             <Target className="w-8 h-8 text-green-500 mx-auto mb-2" />
             <div className="text-2xl font-display font-bold gradient-text">{challenges.length}</div>
             <div className="text-sm text-muted-foreground">Active Challenges</div>
           </Card>
           
-          <Card className="glass p-4 text-center hover-scale">
+          <Card 
+            className="glass p-4 text-center hover-scale cursor-pointer"
+            onClick={() => playClick()}
+            onMouseEnter={() => playHover()}
+          >
             <Crown className="w-8 h-8 text-purple-500 mx-auto mb-2" />
             <div className="text-2xl font-display font-bold gradient-text">2nd</div>
             <div className="text-sm text-muted-foreground">Global Rank</div>
@@ -214,32 +240,48 @@ export const AdvancedGamification = ({ onBack }: { onBack: () => void }) => {
         <div className="flex flex-wrap gap-2 mb-6">
           <Button 
             variant={activeTab === "streaks" ? "default" : "outline"} 
-            onClick={() => setActiveTab("streaks")}
+            onClick={() => {
+              playClick();
+              setActiveTab("streaks");
+            }}
             className={activeTab === "streaks" ? "glass-strong" : "glass"}
+            onMouseEnter={() => playHover()}
           >
             <Flame className="w-4 h-4 mr-2" />
             Streak Tracking
           </Button>
           <Button 
             variant={activeTab === "badges" ? "default" : "outline"} 
-            onClick={() => setActiveTab("badges")}
+            onClick={() => {
+              playClick();
+              setActiveTab("badges");
+            }}
             className={activeTab === "badges" ? "glass-strong" : "glass"}
+            onMouseEnter={() => playHover()}
           >
             <Award className="w-4 h-4 mr-2" />
             Badges
           </Button>
           <Button 
             variant={activeTab === "challenges" ? "default" : "outline"} 
-            onClick={() => setActiveTab("challenges")}
+            onClick={() => {
+              playClick();
+              setActiveTab("challenges");
+            }}
             className={activeTab === "challenges" ? "glass-strong" : "glass"}
+            onMouseEnter={() => playHover()}
           >
             <Target className="w-4 h-4 mr-2" />
             Social Challenges
           </Button>
           <Button 
             variant={activeTab === "competitions" ? "default" : "outline"} 
-            onClick={() => setActiveTab("competitions")}
+            onClick={() => {
+              playClick();
+              setActiveTab("competitions");
+            }}
             className={activeTab === "competitions" ? "glass-strong" : "glass"}
+            onMouseEnter={() => playHover()}
           >
             <Users className="w-4 h-4 mr-2" />
             Group Competitions
@@ -255,7 +297,11 @@ export const AdvancedGamification = ({ onBack }: { onBack: () => void }) => {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="text-center p-6 glass rounded">
+              <div 
+                className="text-center p-6 glass rounded cursor-pointer hover-scale"
+                onClick={() => playClick()}
+                onMouseEnter={() => playHover()}
+              >
                 <div className="text-4xl font-display font-bold gradient-text mb-2">{streak.current}</div>
                 <div className="text-muted-foreground mb-4">Current Streak</div>
                 <div className="text-sm">
@@ -263,7 +309,11 @@ export const AdvancedGamification = ({ onBack }: { onBack: () => void }) => {
                 </div>
               </div>
               
-              <div className="text-center p-6 glass rounded">
+              <div 
+                className="text-center p-6 glass rounded cursor-pointer hover-scale"
+                onClick={() => playClick()}
+                onMouseEnter={() => playHover()}
+              >
                 <div className="text-4xl font-display font-bold gradient-text mb-2">{streak.longest}</div>
                 <div className="text-muted-foreground mb-4">Longest Streak</div>
                 <div className="text-sm">
@@ -291,7 +341,11 @@ export const AdvancedGamification = ({ onBack }: { onBack: () => void }) => {
             </div>
             
             <div className="mt-6 pt-6 border-t border-border">
-              <Button className="glass-strong hover-scale">
+              <Button 
+                className="glass-strong hover-scale"
+                onClick={() => playClick()}
+                onMouseEnter={() => playHover()}
+              >
                 <Calendar className="w-4 h-4 mr-2" />
                 View Streak History
               </Button>
@@ -305,7 +359,9 @@ export const AdvancedGamification = ({ onBack }: { onBack: () => void }) => {
             {badges.map((badge) => (
               <Card 
                 key={badge.id} 
-                className={`p-5 hover-scale ${badge.earned ? "glass-strong" : "glass opacity-70"}`}
+                className={`p-5 hover-scale ${badge.earned ? "glass-strong" : "glass opacity-70"} cursor-pointer`}
+                onClick={() => playClick()}
+                onMouseEnter={() => playHover()}
               >
                 <div className="flex items-center gap-3 mb-3">
                   <div className={`p-2 rounded-full ${badge.earned ? "bg-primary/20 text-primary" : "bg-muted text-muted-foreground"}`}>
@@ -331,7 +387,16 @@ export const AdvancedGamification = ({ onBack }: { onBack: () => void }) => {
                     <Badge variant="secondary">
                       Locked
                     </Badge>
-                    <Button size="sm" variant="outline" className="glass text-xs">
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      className="glass text-xs"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        playClick();
+                      }}
+                      onMouseEnter={() => playHover()}
+                    >
                       How to earn
                     </Button>
                   </div>
@@ -345,7 +410,12 @@ export const AdvancedGamification = ({ onBack }: { onBack: () => void }) => {
         {activeTab === "challenges" && (
           <div className="space-y-4">
             {challenges.map((challenge) => (
-              <Card key={challenge.id} className="glass p-6 hover-scale">
+              <Card 
+                key={challenge.id} 
+                className="glass p-6 hover-scale cursor-pointer"
+                onClick={() => playClick()}
+                onMouseEnter={() => playHover()}
+              >
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div>
                     <div className="flex items-center gap-2 mb-2">
@@ -374,7 +444,15 @@ export const AdvancedGamification = ({ onBack }: { onBack: () => void }) => {
                       </div>
                     </div>
                     
-                    <Button size="sm" className="glass-strong hover-scale">
+                    <Button 
+                      size="sm" 
+                      className="glass-strong hover-scale"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        playClick();
+                      }}
+                      onMouseEnter={() => playHover()}
+                    >
                       Join
                     </Button>
                   </div>
@@ -388,7 +466,12 @@ export const AdvancedGamification = ({ onBack }: { onBack: () => void }) => {
         {activeTab === "competitions" && (
           <div className="space-y-6">
             {competitions.map((competition) => (
-              <Card key={competition.id} className="glass-strong p-6 hover-scale">
+              <Card 
+                key={competition.id} 
+                className="glass-strong p-6 hover-scale cursor-pointer"
+                onClick={() => playClick()}
+                onMouseEnter={() => playHover()}
+              >
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
                     <Users className="w-5 h-5 text-primary" />
@@ -413,7 +496,12 @@ export const AdvancedGamification = ({ onBack }: { onBack: () => void }) => {
                       {competition.participants.slice(0, 4).map((participant, index) => (
                         <div 
                           key={index} 
-                          className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-xs font-display"
+                          className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-xs font-display cursor-pointer hover-scale"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            playClick();
+                          }}
+                          onMouseEnter={() => playHover()}
                         >
                           {participant.name[0]}
                         </div>
@@ -437,7 +525,9 @@ export const AdvancedGamification = ({ onBack }: { onBack: () => void }) => {
                           participant.name === "You" 
                             ? "bg-primary/10 border border-primary/30" 
                             : "glass"
-                        }`}
+                        } cursor-pointer hover-scale`}
+                        onClick={() => playClick()}
+                        onMouseEnter={() => playHover()}
                       >
                         <div className="flex items-center gap-3">
                           <div className={`w-8 h-8 rounded-full flex items-center justify-center font-display ${

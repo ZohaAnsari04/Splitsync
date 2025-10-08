@@ -4,12 +4,15 @@ import { ArrowLeft, Trophy, Star, Zap, Award, Target } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import logo from "@/assets/logo.png";
 import { Progress } from "@/components/ui/progress";
+import { useSound } from "@/hooks/useSound";
 
 interface GamificationProps {
   onBack: () => void;
 }
 
 export const Gamification = ({ onBack }: GamificationProps) => {
+  const { playClick, playHover } = useSound();
+  
   const achievements = [
     { name: "Early Bird", icon: Star, unlocked: true, description: "Paid within 24 hours" },
     { name: "Group Master", icon: Trophy, unlocked: true, description: "Created 10 groups" },
@@ -36,7 +39,16 @@ export const Gamification = ({ onBack }: GamificationProps) => {
         {/* Header */}
         <header className="flex items-center justify-between mb-8 animate-slide-up">
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" onClick={onBack} className="hover-scale">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={() => {
+                playClick();
+                onBack();
+              }} 
+              className="hover-scale"
+              onMouseEnter={() => playHover()}
+            >
               <ArrowLeft className="w-5 h-5" />
             </Button>
             <img src={logo} alt="SplitSync" className="w-10 h-10" />
@@ -53,7 +65,11 @@ export const Gamification = ({ onBack }: GamificationProps) => {
           </div>
           
           <div className="relative inline-block">
-            <div className="text-6xl font-display font-bold gradient-text animate-pulse-glow">
+            <div 
+              className="text-6xl font-display font-bold gradient-text animate-pulse-glow cursor-pointer"
+              onClick={() => playClick()}
+              onMouseEnter={() => playHover()}
+            >
               1,234
             </div>
             <div className="absolute -top-2 -right-2 w-6 h-6 bg-accent rounded-full flex items-center justify-center animate-bounce">
@@ -82,6 +98,8 @@ export const Gamification = ({ onBack }: GamificationProps) => {
                       : "border-muted/20 opacity-60"
                   } animate-scale-in`}
                   style={{ animationDelay: `${index * 0.1}s` }}
+                  onClick={() => playClick()}
+                  onMouseEnter={() => playHover()}
                 >
                   <div className="flex items-center gap-3">
                     <div
@@ -123,6 +141,8 @@ export const Gamification = ({ onBack }: GamificationProps) => {
                     user.rank === 1 ? "border-primary/30 glow-purple" : "border-transparent"
                   }`}
                   style={{ animationDelay: `${index * 0.1}s` }}
+                  onClick={() => playClick()}
+                  onMouseEnter={() => playHover()}
                 >
                   <div className="flex items-center gap-3 flex-1">
                     <span className="text-2xl font-display font-bold text-muted-foreground w-8">
@@ -163,6 +183,8 @@ export const Gamification = ({ onBack }: GamificationProps) => {
                 key={challenge.name}
                 className="glass p-4 rounded-lg space-y-3 hover-scale border border-primary/20 hover:border-primary/40 transition-all animate-scale-in"
                 style={{ animationDelay: `${index * 0.1}s` }}
+                onClick={() => playClick()}
+                onMouseEnter={() => playHover()}
               >
                 <div className="flex items-center justify-between">
                   <h4 className="font-semibold">{challenge.name}</h4>

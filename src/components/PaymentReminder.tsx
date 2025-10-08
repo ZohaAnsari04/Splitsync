@@ -19,9 +19,17 @@ export const PaymentReminder = ({
   onPayNow, 
   onDismiss 
 }: PaymentReminderProps) => {
-  const { playClick, playHover } = useSound();
+  const { playClick, playHover, playNotification } = useSound();
   const [showPaymentScreen, setShowPaymentScreen] = useState(false);
   const [currentMeme, setCurrentMeme] = useState(0);
+
+  // Play notification sound when component mounts
+  useEffect(() => {
+    playNotification();
+    
+    // Select a new random meme each time the component is shown
+    setCurrentMeme(Math.floor(Math.random() * memes.length));
+  }, []);
 
   // Expanded collection of 50 cute, animated memes with icons
   const memes = [
@@ -76,11 +84,6 @@ export const PaymentReminder = ({
     { id: 49, text: "Smile with financial freedom! 😊", icon: <Smile className="w-16 h-16 text-yellow-500 animate-pulse" />, color: "from-yellow-500 to-amber-500" },
     { id: 50, text: "Don't frown over payments! 😟", icon: <Frown className="w-16 h-16 text-gray-500 animate-spin" />, color: "from-gray-500 to-stone-500" }
   ];
-
-  // Select a new random meme each time the component is shown
-  useEffect(() => {
-    setCurrentMeme(Math.floor(Math.random() * memes.length));
-  }, []);
 
   const randomMeme = memes[currentMeme];
 

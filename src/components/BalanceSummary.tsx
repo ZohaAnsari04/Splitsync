@@ -1,5 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Wallet, ArrowDownLeft, ArrowUpRight } from "lucide-react";
+import { useSound } from "@/hooks/useSound";
 
 interface Balance {
   id: number;
@@ -13,6 +14,8 @@ interface BalanceSummaryProps {
 }
 
 export const BalanceSummary = ({ balances }: BalanceSummaryProps) => {
+  const { playClick, playHover } = useSound();
+  
   // Filter out zero balances
   const nonZeroBalances = balances.filter(balance => balance.amount > 0);
   
@@ -42,6 +45,8 @@ export const BalanceSummary = ({ balances }: BalanceSummaryProps) => {
           <div 
             key={balance.id}
             className="glass p-4 rounded-lg hover-scale cursor-pointer group transition-all hover:border-primary/40 border border-transparent"
+            onClick={() => playClick()}
+            onMouseEnter={() => playHover()}
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">

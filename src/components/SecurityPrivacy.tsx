@@ -16,6 +16,7 @@ import {
   Mail
 } from "lucide-react";
 import { useState } from "react";
+import { useSound } from "@/hooks/useSound";
 
 interface PrivacySetting {
   id: string;
@@ -27,6 +28,7 @@ interface PrivacySetting {
 export const SecurityPrivacy = ({ onBack }: { onBack: () => void }) => {
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(true);
   const [encryptionEnabled, setEncryptionEnabled] = useState(true);
+  const { playClick, playHover } = useSound();
   
   // Privacy settings
   const privacySettings: PrivacySetting[] = [
@@ -58,6 +60,7 @@ export const SecurityPrivacy = ({ onBack }: { onBack: () => void }) => {
 
   // Toggle privacy setting
   const togglePrivacySetting = (id: string) => {
+    playClick();
     // In a real app, this would update the setting
     console.log(`Toggled privacy setting ${id}`);
   };
@@ -71,14 +74,26 @@ export const SecurityPrivacy = ({ onBack }: { onBack: () => void }) => {
             <h1 className="text-3xl font-display gradient-text">Security & Privacy</h1>
             <p className="text-muted-foreground">Protect your data and control your privacy</p>
           </div>
-          <Button onClick={onBack} variant="outline" className="glass hover-scale">
+          <Button 
+            onClick={() => {
+              playClick();
+              onBack();
+            }} 
+            variant="outline" 
+            className="glass hover-scale"
+            onMouseEnter={() => playHover()}
+          >
             Back to Dashboard
           </Button>
         </div>
 
         {/* Security Status */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card className="glass p-6 text-center hover-scale">
+          <Card 
+            className="glass p-6 text-center hover-scale cursor-pointer"
+            onClick={() => playClick()}
+            onMouseEnter={() => playHover()}
+          >
             <div className="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center mx-auto mb-4">
               {encryptionEnabled ? (
                 <Lock className="w-6 h-6 text-green-500" />
@@ -95,7 +110,11 @@ export const SecurityPrivacy = ({ onBack }: { onBack: () => void }) => {
             </p>
           </Card>
           
-          <Card className="glass p-6 text-center hover-scale">
+          <Card 
+            className="glass p-6 text-center hover-scale cursor-pointer"
+            onClick={() => playClick()}
+            onMouseEnter={() => playHover()}
+          >
             <div className="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center mx-auto mb-4">
               {twoFactorEnabled ? (
                 <Key className="w-6 h-6 text-blue-500" />
@@ -112,7 +131,11 @@ export const SecurityPrivacy = ({ onBack }: { onBack: () => void }) => {
             </p>
           </Card>
           
-          <Card className="glass p-6 text-center hover-scale">
+          <Card 
+            className="glass p-6 text-center hover-scale cursor-pointer"
+            onClick={() => playClick()}
+            onMouseEnter={() => playHover()}
+          >
             <div className="w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center mx-auto mb-4">
               <Database className="w-6 h-6 text-purple-500" />
             </div>
@@ -137,7 +160,11 @@ export const SecurityPrivacy = ({ onBack }: { onBack: () => void }) => {
           </p>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div className="p-4 glass rounded">
+            <div 
+              className="p-4 glass rounded cursor-pointer hover-scale"
+              onClick={() => playClick()}
+              onMouseEnter={() => playHover()}
+            >
               <div className="flex items-center gap-2 mb-2">
                 <Lock className="w-5 h-5 text-green-500" />
                 <span className="font-semibold">AES-256 Encryption</span>
@@ -147,7 +174,11 @@ export const SecurityPrivacy = ({ onBack }: { onBack: () => void }) => {
               </p>
             </div>
             
-            <div className="p-4 glass rounded">
+            <div 
+              className="p-4 glass rounded cursor-pointer hover-scale"
+              onClick={() => playClick()}
+              onMouseEnter={() => playHover()}
+            >
               <div className="flex items-center gap-2 mb-2">
                 <Shield className="w-5 h-5 text-green-500" />
                 <span className="font-semibold">TLS 1.3</span>
@@ -167,8 +198,12 @@ export const SecurityPrivacy = ({ onBack }: { onBack: () => void }) => {
             </div>
             <Button 
               variant={encryptionEnabled ? "default" : "outline"}
-              onClick={() => setEncryptionEnabled(!encryptionEnabled)}
+              onClick={() => {
+                playClick();
+                setEncryptionEnabled(!encryptionEnabled);
+              }}
               className={encryptionEnabled ? "glass-strong" : "glass"}
+              onMouseEnter={() => playHover()}
             >
               {encryptionEnabled ? "Encryption Active" : "Enable Encryption"}
             </Button>
@@ -186,7 +221,11 @@ export const SecurityPrivacy = ({ onBack }: { onBack: () => void }) => {
           </p>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-            <div className="p-4 glass rounded text-center">
+            <div 
+              className="p-4 glass rounded text-center cursor-pointer hover-scale"
+              onClick={() => playClick()}
+              onMouseEnter={() => playHover()}
+            >
               <Smartphone className="w-8 h-8 text-primary mx-auto mb-2" />
               <div className="font-semibold">Authenticator App</div>
               <div className="text-sm text-muted-foreground">
@@ -194,7 +233,11 @@ export const SecurityPrivacy = ({ onBack }: { onBack: () => void }) => {
               </div>
             </div>
             
-            <div className="p-4 glass rounded text-center">
+            <div 
+              className="p-4 glass rounded text-center cursor-pointer hover-scale"
+              onClick={() => playClick()}
+              onMouseEnter={() => playHover()}
+            >
               <MessageCircle className="w-8 h-8 text-secondary mx-auto mb-2" />
               <div className="font-semibold">SMS Codes</div>
               <div className="text-sm text-muted-foreground">
@@ -202,7 +245,11 @@ export const SecurityPrivacy = ({ onBack }: { onBack: () => void }) => {
               </div>
             </div>
             
-            <div className="p-4 glass rounded text-center">
+            <div 
+              className="p-4 glass rounded text-center cursor-pointer hover-scale"
+              onClick={() => playClick()}
+              onMouseEnter={() => playHover()}
+            >
               <Mail className="w-8 h-8 text-accent mx-auto mb-2" />
               <div className="font-semibold">Email Codes</div>
               <div className="text-sm text-muted-foreground">
@@ -222,8 +269,12 @@ export const SecurityPrivacy = ({ onBack }: { onBack: () => void }) => {
             </div>
             <Button 
               variant={twoFactorEnabled ? "default" : "outline"}
-              onClick={() => setTwoFactorEnabled(!twoFactorEnabled)}
+              onClick={() => {
+                playClick();
+                setTwoFactorEnabled(!twoFactorEnabled);
+              }}
               className={twoFactorEnabled ? "glass-strong" : "glass"}
+              onMouseEnter={() => playHover()}
             >
               {twoFactorEnabled ? "Enabled" : "Enable 2FA"}
             </Button>
@@ -263,7 +314,12 @@ export const SecurityPrivacy = ({ onBack }: { onBack: () => void }) => {
                     <span>2 hours ago</span>
                   </div>
                   <div className="flex gap-2">
-                    <Button size="sm" className="flex-1 glass-strong">
+                    <Button 
+                      size="sm" 
+                      className="flex-1 glass-strong"
+                      onClick={() => playClick()}
+                      onMouseEnter={() => playHover()}
+                    >
                       Backup Now
                     </Button>
                   </div>
@@ -282,15 +338,27 @@ export const SecurityPrivacy = ({ onBack }: { onBack: () => void }) => {
                     <span>Available Backups</span>
                   </div>
                   <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
+                    <div 
+                      className="flex justify-between text-sm cursor-pointer hover-scale p-1 rounded"
+                      onClick={() => playClick()}
+                      onMouseEnter={() => playHover()}
+                    >
                       <span>June 15, 2024</span>
                       <span>15.2 MB</span>
                     </div>
-                    <div className="flex justify-between text-sm">
+                    <div 
+                      className="flex justify-between text-sm cursor-pointer hover-scale p-1 rounded"
+                      onClick={() => playClick()}
+                      onMouseEnter={() => playHover()}
+                    >
                       <span>June 14, 2024</span>
                       <span>14.8 MB</span>
                     </div>
-                    <div className="flex justify-between text-sm">
+                    <div 
+                      className="flex justify-between text-sm cursor-pointer hover-scale p-1 rounded"
+                      onClick={() => playClick()}
+                      onMouseEnter={() => playHover()}
+                    >
                       <span>June 13, 2024</span>
                       <span>14.5 MB</span>
                     </div>
@@ -298,7 +366,11 @@ export const SecurityPrivacy = ({ onBack }: { onBack: () => void }) => {
                 </div>
                 
                 <div className="p-3 glass rounded">
-                  <Button className="w-full glass-strong">
+                  <Button 
+                    className="w-full glass-strong"
+                    onClick={() => playClick()}
+                    onMouseEnter={() => playHover()}
+                  >
                     Restore Selected Backup
                   </Button>
                 </div>
@@ -319,15 +391,28 @@ export const SecurityPrivacy = ({ onBack }: { onBack: () => void }) => {
           
           <div className="space-y-3">
             {privacySettings.map((setting) => (
-              <div key={setting.id} className="flex items-center justify-between p-4 glass rounded">
+              <div 
+                key={setting.id} 
+                className="flex items-center justify-between p-4 glass rounded cursor-pointer hover-scale"
+                onClick={() => {
+                  playClick();
+                  togglePrivacySetting(setting.id);
+                }}
+                onMouseEnter={() => playHover()}
+              >
                 <div>
                   <div className="font-semibold">{setting.name}</div>
                   <div className="text-sm text-muted-foreground">{setting.description}</div>
                 </div>
                 <Button 
                   variant={setting.enabled ? "default" : "outline"}
-                  onClick={() => togglePrivacySetting(setting.id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    playClick();
+                    togglePrivacySetting(setting.id);
+                  }}
                   className={setting.enabled ? "glass-strong" : "glass"}
+                  onMouseEnter={() => playHover()}
                 >
                   {setting.enabled ? "Enabled" : "Disabled"}
                 </Button>

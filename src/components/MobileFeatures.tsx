@@ -12,11 +12,13 @@ import {
   Unlock
 } from "lucide-react";
 import { useState } from "react";
+import { useSound } from "@/hooks/useSound";
 
 export const MobileFeatures = ({ onBack }: { onBack: () => void }) => {
   const [biometricEnabled, setBiometricEnabled] = useState(true);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [widgetEnabled, setWidgetEnabled] = useState(false);
+  const { playClick, playHover } = useSound();
   
   return (
     <div className="min-h-screen relative overflow-hidden p-6">
@@ -27,7 +29,15 @@ export const MobileFeatures = ({ onBack }: { onBack: () => void }) => {
             <h1 className="text-3xl font-display gradient-text">Mobile Features</h1>
             <p className="text-muted-foreground">Optimized features for your mobile experience</p>
           </div>
-          <Button onClick={onBack} variant="outline" className="glass hover-scale">
+          <Button 
+            onClick={() => {
+              playClick();
+              onBack();
+            }} 
+            variant="outline" 
+            className="glass hover-scale"
+            onMouseEnter={() => playHover()}
+          >
             Back to Dashboard
           </Button>
         </div>
@@ -51,8 +61,12 @@ export const MobileFeatures = ({ onBack }: { onBack: () => void }) => {
                 </div>
                 <Button 
                   variant={biometricEnabled ? "default" : "outline"}
-                  onClick={() => setBiometricEnabled(!biometricEnabled)}
+                  onClick={() => {
+                    playClick();
+                    setBiometricEnabled(!biometricEnabled);
+                  }}
                   className={biometricEnabled ? "glass-strong" : "glass"}
+                  onMouseEnter={() => playHover()}
                 >
                   {biometricEnabled ? "Enabled" : "Enable"}
                 </Button>
@@ -66,6 +80,8 @@ export const MobileFeatures = ({ onBack }: { onBack: () => void }) => {
                 <Button 
                   variant="outline"
                   className="glass"
+                  onClick={() => playClick()}
+                  onMouseEnter={() => playHover()}
                 >
                   Set Up
                 </Button>
@@ -105,9 +121,13 @@ export const MobileFeatures = ({ onBack }: { onBack: () => void }) => {
                   <span>Payment Reminders</span>
                   <Button 
                     variant={notificationsEnabled ? "default" : "outline"}
-                    onClick={() => setNotificationsEnabled(!notificationsEnabled)}
+                    onClick={() => {
+                      playClick();
+                      setNotificationsEnabled(!notificationsEnabled);
+                    }}
                     className={notificationsEnabled ? "glass-strong" : "glass"}
                     size="sm"
+                    onMouseEnter={() => playHover()}
                   >
                     {notificationsEnabled ? "On" : "Off"}
                   </Button>
@@ -120,7 +140,13 @@ export const MobileFeatures = ({ onBack }: { onBack: () => void }) => {
               <div className="p-4 glass rounded">
                 <div className="flex items-center justify-between mb-2">
                   <span>Expense Reports</span>
-                  <Button variant="outline" className="glass" size="sm">
+                  <Button 
+                    variant="outline" 
+                    className="glass" 
+                    size="sm"
+                    onClick={() => playClick()}
+                    onMouseEnter={() => playHover()}
+                  >
                     On
                   </Button>
                 </div>
@@ -131,11 +157,20 @@ export const MobileFeatures = ({ onBack }: { onBack: () => void }) => {
             </div>
             
             <div className="flex gap-3">
-              <Button className="glass-strong hover-scale">
+              <Button 
+                className="glass-strong hover-scale"
+                onClick={() => playClick()}
+                onMouseEnter={() => playHover()}
+              >
                 <Bell className="w-4 h-4 mr-2" />
                 Test Notification
               </Button>
-              <Button variant="outline" className="glass">
+              <Button 
+                variant="outline" 
+                className="glass"
+                onClick={() => playClick()}
+                onMouseEnter={() => playHover()}
+              >
                 Notification Settings
               </Button>
             </div>
@@ -183,8 +218,12 @@ export const MobileFeatures = ({ onBack }: { onBack: () => void }) => {
                   <span>Widget Support</span>
                   <Button 
                     variant={widgetEnabled ? "default" : "outline"}
-                    onClick={() => setWidgetEnabled(!widgetEnabled)}
+                    onClick={() => {
+                      playClick();
+                      setWidgetEnabled(!widgetEnabled);
+                    }}
                     className={widgetEnabled ? "glass-strong" : "glass"}
+                    onMouseEnter={() => playHover()}
                   >
                     {widgetEnabled ? "Enabled" : "Enable"}
                   </Button>

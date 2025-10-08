@@ -3,12 +3,15 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, TrendingUp, PieChart, Calendar, Leaf } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import logo from "@/assets/logo.png";
+import { useSound } from "@/hooks/useSound";
 
 interface AnalyticsProps {
   onBack: () => void;
 }
 
 export const Analytics = ({ onBack }: AnalyticsProps) => {
+  const { playClick, playHover } = useSound();
+  
   const monthlyData = [
     { month: "Jan", amount: 4500 },
     { month: "Feb", amount: 5200 },
@@ -36,8 +39,12 @@ export const Analytics = ({ onBack }: AnalyticsProps) => {
             <Button
               variant="ghost"
               size="icon"
-              onClick={onBack}
+              onClick={() => {
+                playClick();
+                onBack();
+              }}
               className="hover-scale"
+              onMouseEnter={() => playHover()}
             >
               <ArrowLeft className="w-5 h-5" />
             </Button>
@@ -49,7 +56,11 @@ export const Analytics = ({ onBack }: AnalyticsProps) => {
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card className="glass-strong p-6 hover-scale animate-slide-up border-primary/20">
+          <Card 
+            className="glass-strong p-6 hover-scale animate-slide-up border-primary/20 cursor-pointer"
+            onClick={() => playClick()}
+            onMouseEnter={() => playHover()}
+          >
             <div className="flex items-center gap-3 mb-4">
               <TrendingUp className="w-6 h-6 text-primary" />
               <h3 className="font-display">Monthly Trend</h3>
@@ -58,7 +69,12 @@ export const Analytics = ({ onBack }: AnalyticsProps) => {
             <p className="text-sm text-muted-foreground mt-1">vs last month</p>
           </Card>
 
-          <Card className="glass-strong p-6 hover-scale animate-slide-up border-secondary/20" style={{ animationDelay: '0.1s' }}>
+          <Card 
+            className="glass-strong p-6 hover-scale animate-slide-up border-secondary/20 cursor-pointer"
+            style={{ animationDelay: '0.1s' }}
+            onClick={() => playClick()}
+            onMouseEnter={() => playHover()}
+          >
             <div className="flex items-center gap-3 mb-4">
               <PieChart className="w-6 h-6 text-secondary" />
               <h3 className="font-display">Top Category</h3>
@@ -67,7 +83,12 @@ export const Analytics = ({ onBack }: AnalyticsProps) => {
             <p className="text-sm text-muted-foreground mt-1">35% of expenses</p>
           </Card>
 
-          <Card className="glass-strong p-6 hover-scale animate-slide-up border-accent/20" style={{ animationDelay: '0.2s' }}>
+          <Card 
+            className="glass-strong p-6 hover-scale animate-slide-up border-accent/20 cursor-pointer"
+            style={{ animationDelay: '0.2s' }}
+            onClick={() => playClick()}
+            onMouseEnter={() => playHover()}
+          >
             <div className="flex items-center gap-3 mb-4">
               <Leaf className="w-6 h-6 text-accent" />
               <h3 className="font-display">Carbon Saved</h3>
@@ -94,6 +115,8 @@ export const Analytics = ({ onBack }: AnalyticsProps) => {
                       height: `${(data.amount / maxAmount) * 200}px`,
                       animationDelay: `${index * 0.1}s`,
                     }}
+                    onClick={() => playClick()}
+                    onMouseEnter={() => playHover()}
                   >
                     <div className="absolute inset-0 bg-gradient-to-t from-primary via-secondary to-accent opacity-50 group-hover:opacity-80 transition-opacity" />
                     
@@ -118,7 +141,13 @@ export const Analytics = ({ onBack }: AnalyticsProps) => {
           
           <div className="space-y-4">
             {categoryData.map((category, index) => (
-              <div key={category.name} className="animate-scale-in" style={{ animationDelay: `${index * 0.1}s` }}>
+              <div 
+                key={category.name} 
+                className="animate-scale-in cursor-pointer hover-scale"
+                style={{ animationDelay: `${index * 0.1}s` }}
+                onClick={() => playClick()}
+                onMouseEnter={() => playHover()}
+              >
                 <div className="flex items-center justify-between mb-2">
                   <span className="font-semibold">{category.name}</span>
                   <span className="font-mono text-primary">{category.value}%</span>

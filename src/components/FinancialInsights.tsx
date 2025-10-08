@@ -13,6 +13,7 @@ import {
   Plus
 } from "lucide-react";
 import { useState } from "react";
+import { useSound } from "@/hooks/useSound";
 
 interface Budget {
   id: string;
@@ -50,6 +51,7 @@ interface Forecast {
 
 export const FinancialInsights = ({ onBack }: { onBack: () => void }) => {
   const [timeRange, setTimeRange] = useState<"week" | "month" | "quarter">("month");
+  const { playClick, playHover } = useSound();
   
   // Sample data for budgets
   const budgets: Budget[] = [
@@ -106,7 +108,15 @@ export const FinancialInsights = ({ onBack }: { onBack: () => void }) => {
             <h1 className="text-3xl font-display gradient-text">Financial Insights</h1>
             <p className="text-muted-foreground">Track your spending patterns and financial goals</p>
           </div>
-          <Button onClick={onBack} variant="outline" className="glass hover-scale">
+          <Button 
+            onClick={() => {
+              playClick();
+              onBack();
+            }} 
+            variant="outline" 
+            className="glass hover-scale"
+            onMouseEnter={() => playHover()}
+          >
             Back to Dashboard
           </Button>
         </div>
@@ -115,22 +125,34 @@ export const FinancialInsights = ({ onBack }: { onBack: () => void }) => {
         <div className="flex gap-2 mb-6">
           <Button 
             variant={timeRange === "week" ? "default" : "outline"} 
-            onClick={() => setTimeRange("week")}
+            onClick={() => {
+              playClick();
+              setTimeRange("week");
+            }}
             className={timeRange === "week" ? "glass-strong text-foreground" : "glass text-foreground"}
+            onMouseEnter={() => playHover()}
           >
             Week
           </Button>
           <Button 
             variant={timeRange === "month" ? "default" : "outline"} 
-            onClick={() => setTimeRange("month")}
+            onClick={() => {
+              playClick();
+              setTimeRange("month");
+            }}
             className={timeRange === "month" ? "glass-strong text-foreground" : "glass text-foreground"}
+            onMouseEnter={() => playHover()}
           >
             Month
           </Button>
           <Button 
             variant={timeRange === "quarter" ? "default" : "outline"} 
-            onClick={() => setTimeRange("quarter")}
+            onClick={() => {
+              playClick();
+              setTimeRange("quarter");
+            }}
             className={timeRange === "quarter" ? "glass-strong text-foreground" : "glass text-foreground"}
+            onMouseEnter={() => playHover()}
           >
             Quarter
           </Button>
@@ -144,7 +166,12 @@ export const FinancialInsights = ({ onBack }: { onBack: () => void }) => {
                 <PieChart className="w-5 h-5" />
                 Budget Overview
               </h2>
-              <Button size="sm" className="glass-strong hover-scale text-foreground">
+              <Button 
+                size="sm" 
+                className="glass-strong hover-scale text-foreground"
+                onClick={() => playClick()}
+                onMouseEnter={() => playHover()}
+              >
                 <Plus className="w-4 h-4 mr-1" />
                 Add Budget
               </Button>
@@ -193,7 +220,12 @@ export const FinancialInsights = ({ onBack }: { onBack: () => void }) => {
             
             <div className="space-y-4">
               {spendingComparisons.map((comparison, index) => (
-                <div key={index} className="flex items-center justify-between p-3 glass rounded">
+                <div 
+                  key={index} 
+                  className="flex items-center justify-between p-3 glass rounded cursor-pointer hover-scale"
+                  onClick={() => playClick()}
+                  onMouseEnter={() => playHover()}
+                >
                   <span>{comparison.period}</span>
                   <div className="flex items-center gap-2">
                     <span className="font-mono font-bold">₹{comparison.amount.toLocaleString()}</span>
@@ -222,7 +254,12 @@ export const FinancialInsights = ({ onBack }: { onBack: () => void }) => {
             
             <div className="space-y-4">
               {spendingHabits.map((habit, index) => (
-                <div key={index} className="flex items-center justify-between">
+                <div 
+                  key={index} 
+                  className="flex items-center justify-between cursor-pointer hover-scale p-2 rounded"
+                  onClick={() => playClick()}
+                  onMouseEnter={() => playHover()}
+                >
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
                       <span className="text-xs font-display">{habit.percentage}%</span>
@@ -246,7 +283,12 @@ export const FinancialInsights = ({ onBack }: { onBack: () => void }) => {
                 <Target className="w-5 h-5" />
                 Savings Goals
               </h2>
-              <Button size="sm" className="glass-strong hover-scale text-foreground">
+              <Button 
+                size="sm" 
+                className="glass-strong hover-scale text-foreground"
+                onClick={() => playClick()}
+                onMouseEnter={() => playHover()}
+              >
                 <Plus className="w-4 h-4 mr-1" />
                 Add Goal
               </Button>
@@ -260,7 +302,12 @@ export const FinancialInsights = ({ onBack }: { onBack: () => void }) => {
                 const daysLeft = Math.ceil((deadline.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
                 
                 return (
-                  <div key={goal.id} className="p-3 glass rounded">
+                  <div 
+                    key={goal.id} 
+                    className="p-3 glass rounded cursor-pointer hover-scale"
+                    onClick={() => playClick()}
+                    onMouseEnter={() => playHover()}
+                  >
                     <div className="flex justify-between mb-2">
                       <span className="font-semibold">{goal.name}</span>
                       <span className="font-mono">₹{goal.current.toLocaleString()} / ₹{goal.target.toLocaleString()}</span>
@@ -297,7 +344,12 @@ export const FinancialInsights = ({ onBack }: { onBack: () => void }) => {
               const changePercentage = ((change / forecast.previous) * 100).toFixed(1);
               
               return (
-                <div key={index} className="text-center p-4 glass rounded">
+                <div 
+                  key={index} 
+                  className="text-center p-4 glass rounded cursor-pointer hover-scale"
+                  onClick={() => playClick()}
+                  onMouseEnter={() => playHover()}
+                >
                   <div className="text-sm text-muted-foreground mb-1">{forecast.month}</div>
                   <div className="font-mono font-bold gradient-text text-lg">₹{forecast.predicted.toLocaleString()}</div>
                   <div className={`text-xs mt-1 ${change >= 0 ? "text-red-500" : "text-green-500"}`}>

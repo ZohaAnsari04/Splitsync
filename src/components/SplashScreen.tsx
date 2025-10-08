@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import logo from "@/assets/logo.png";
+import { useSound } from "@/hooks/useSound";
 
 interface SplashScreenProps {
   onComplete: () => void;
@@ -7,15 +8,17 @@ interface SplashScreenProps {
 
 export const SplashScreen = ({ onComplete }: SplashScreenProps) => {
   const [fadeOut, setFadeOut] = useState(false);
+  const { playClick } = useSound();
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setFadeOut(true);
+      playClick(); // Play sound when splash screen completes
       setTimeout(onComplete, 800);
     }, 3000);
 
     return () => clearTimeout(timer);
-  }, [onComplete]);
+  }, [onComplete, playClick]);
 
   return (
     <div
