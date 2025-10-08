@@ -1,7 +1,71 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { X, AlertTriangle, Zap, Wallet, CreditCard, IndianRupee, Timer, Calendar, User, PiggyBank, ShoppingCart, Coffee, Pizza, Car, Home, Phone, Gift, Heart, Star, Moon, Sun, Cloud, Umbrella, Camera, Music, Gamepad, Book, Pen, Scissors, Hammer, Key, Lock, Unlock, Eye, EyeOff, ThumbsUp, ThumbsDown, Smile, Frown, Meh, Flame, Snowflake, Wind, Droplets, Leaf, Mountain, Waves, Flower, Trees, Cat, Dog, Bird, Fish, Bug } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { 
+  X, 
+  AlertTriangle, 
+  Zap, 
+  Wallet, 
+  CreditCard, 
+  IndianRupee, 
+  Timer, 
+  Calendar, 
+  User, 
+  PiggyBank, 
+  ShoppingCart, 
+  Coffee, 
+  Pizza, 
+  Car, 
+  Home, 
+  Phone, 
+  Gift, 
+  Heart, 
+  Star, 
+  Moon, 
+  Sun, 
+  Cloud, 
+  Umbrella, 
+  Camera, 
+  Music, 
+  Gamepad, 
+  Book, 
+  Pen, 
+  Scissors, 
+  Hammer, 
+  Key, 
+  Lock, 
+  Unlock, 
+  Eye, 
+  EyeOff, 
+  ThumbsUp, 
+  ThumbsDown, 
+  Smile, 
+  Frown, 
+  Meh, 
+  Flame, 
+  Snowflake, 
+  Wind, 
+  Droplets, 
+  Leaf, 
+  Mountain, 
+  Waves, 
+  Flower, 
+  Trees, 
+  Cat, 
+  Dog, 
+  Bird, 
+  Fish, 
+  Bug,
+  QrCode,
+  Copy,
+  Check,
+  ArrowRight,
+  Shield,
+  Smartphone,
+  Banknote,
+  CreditCard as CreditCardIcon
+} from "lucide-react";
 import { useSound } from "@/hooks/useSound";
 
 interface PaymentReminderProps {
@@ -22,6 +86,11 @@ export const PaymentReminder = ({
   const { playClick, playHover, playNotification } = useSound();
   const [showPaymentScreen, setShowPaymentScreen] = useState(false);
   const [currentMeme, setCurrentMeme] = useState(0);
+  const [upiId, setUpiId] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState<"upi" | "qr" | "bank">("upi");
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [paymentSuccess, setPaymentSuccess] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   // Play notification sound when component mounts
   useEffect(() => {
@@ -87,7 +156,61 @@ export const PaymentReminder = ({
 
   const randomMeme = memes[currentMeme];
 
+  const handlePayNow = () => {
+    playClick();
+    setIsProcessing(true);
+    
+    // Simulate payment processing
+    setTimeout(() => {
+      setIsProcessing(false);
+      setPaymentSuccess(true);
+      
+      // Close the modal after success
+      setTimeout(() => {
+        onPayNow();
+      }, 2000);
+    }, 3000);
+  };
+
+  const copyToClipboard = () => {
+    playClick();
+    setCopied(true);
+    navigator.clipboard.writeText("alice@upi");
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   if (showPaymentScreen) {
+    if (paymentSuccess) {
+      return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
+          <Card className="glass-strong max-w-md w-full relative border-2 border-primary/30">
+            <div className="p-6">
+              <div className="text-center mb-6">
+                <div className="w-16 h-16 rounded-full bg-green-500/20 flex items-center justify-center mx-auto mb-4">
+                  <Check className="w-8 h-8 text-green-500" />
+                </div>
+                <h2 className="text-2xl font-display gradient-text">Payment Successful!</h2>
+                <p className="text-muted-foreground">₹{amount.toLocaleString()} paid to {creditorName}</p>
+              </div>
+              
+              <div className="glass p-4 rounded-lg text-center">
+                <p className="font-semibold mb-2">Transaction ID</p>
+                <p className="font-mono text-sm">TXN-{Date.now().toString().slice(-8)}</p>
+                <p className="text-xs text-muted-foreground mt-2">Amount will be reflected in your account shortly</p>
+              </div>
+              
+              <Button 
+                className="w-full glass-strong hover-scale text-foreground font-display mt-6"
+                onClick={() => onPayNow()}
+              >
+                Continue
+              </Button>
+            </div>
+          </Card>
+        </div>
+      );
+    }
+
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
         <Card className="glass-strong max-w-md w-full relative border-2 border-primary/30">
@@ -122,52 +245,192 @@ export const PaymentReminder = ({
                 <p className="text-3xl font-bold gradient-text">₹{amount.toLocaleString()}</p>
               </div>
 
-              <div className="space-y-4">
-                <div className="glass p-4 rounded-lg">
-                  <h3 className="font-semibold mb-2">UPI Payment</h3>
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center border border-white/30">
-                      <span className="text-blue-500 font-bold">BH</span>
-                    </div>
-                    <div className="flex-1">
-                      <p className="font-medium">BHIM UPI</p>
-                      <p className="text-sm text-muted-foreground">Instant Transfer</p>
-                    </div>
-                  </div>
+              {/* Payment Method Selection */}
+              <div className="glass p-4 rounded-lg">
+                <h3 className="font-semibold mb-3">Payment Method</h3>
+                <div className="grid grid-cols-3 gap-2">
                   <Button 
-                    className="w-full glass-strong hover-scale text-foreground font-display py-6 text-lg"
+                    variant={paymentMethod === "upi" ? "default" : "outline"}
+                    className={`flex flex-col items-center justify-center h-20 ${paymentMethod === "upi" ? "glass-strong" : "glass"}`}
                     onClick={() => {
                       playClick();
-                      // In a real app, this would initiate UPI payment
-                      alert("UPI payment initiated! Redirecting to your UPI app...");
-                      onPayNow();
+                      setPaymentMethod("upi");
                     }}
-                    onMouseEnter={() => playHover()}
                   >
-                    Pay with UPI
+                    <Smartphone className="w-6 h-6 mb-1" />
+                    <span className="text-xs">UPI ID</span>
+                  </Button>
+                  <Button 
+                    variant={paymentMethod === "qr" ? "default" : "outline"}
+                    className={`flex flex-col items-center justify-center h-20 ${paymentMethod === "qr" ? "glass-strong" : "glass"}`}
+                    onClick={() => {
+                      playClick();
+                      setPaymentMethod("qr");
+                    }}
+                  >
+                    <QrCode className="w-6 h-6 mb-1" />
+                    <span className="text-xs">QR Scan</span>
+                  </Button>
+                  <Button 
+                    variant={paymentMethod === "bank" ? "default" : "outline"}
+                    className={`flex flex-col items-center justify-center h-20 ${paymentMethod === "bank" ? "glass-strong" : "glass"}`}
+                    onClick={() => {
+                      playClick();
+                      setPaymentMethod("bank");
+                    }}
+                  >
+                    <Banknote className="w-6 h-6 mb-1" />
+                    <span className="text-xs">Bank</span>
                   </Button>
                 </div>
+              </div>
 
+              {/* UPI ID Input */}
+              {paymentMethod === "upi" && (
                 <div className="glass p-4 rounded-lg">
-                  <h3 className="font-semibold mb-2">Other Options</h3>
-                  <div className="grid grid-cols-2 gap-2">
+                  <h3 className="font-semibold mb-3">Pay with UPI ID</h3>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="text-sm text-muted-foreground mb-1 block">Recipient's UPI ID</label>
+                      <div className="flex gap-2">
+                        <Input 
+                          value="alice@upi"
+                          readOnly
+                          className="flex-1 glass"
+                        />
+                        <Button 
+                          size="icon"
+                          variant="outline"
+                          className="glass"
+                          onClick={copyToClipboard}
+                        >
+                          {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <label className="text-sm text-muted-foreground mb-1 block">Your UPI ID</label>
+                      <Input 
+                        placeholder="you@upi"
+                        value={upiId}
+                        onChange={(e) => setUpiId(e.target.value)}
+                        className="glass"
+                      />
+                    </div>
+                    
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Shield className="w-4 h-4" />
+                      <span>Secured with AES-256 encryption</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* QR Code */}
+              {paymentMethod === "qr" && (
+                <div className="glass p-4 rounded-lg">
+                  <h3 className="font-semibold mb-3">Scan QR Code</h3>
+                  <div className="flex flex-col items-center">
+                    <div className="bg-white p-4 rounded-lg mb-4">
+                      <div className="grid grid-cols-4 gap-1 w-48 h-48">
+                        {[...Array(16)].map((_, i) => (
+                          <div 
+                            key={i} 
+                            className={`w-6 h-6 rounded-sm ${
+                              Math.random() > 0.5 ? "bg-black" : "bg-white"
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-3">Scan this QR code with any UPI app</p>
                     <Button 
                       variant="outline" 
-                      className="glass hover-scale"
-                      onClick={() => playClick()}
-                      onMouseEnter={() => playHover()}
+                      className="glass"
+                      onClick={() => {
+                        playClick();
+                        alert("In a real app, this would open your camera to scan the QR code");
+                      }}
                     >
-                      Pay Later
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      className="glass hover-scale"
-                      onClick={() => playClick()}
-                      onMouseEnter={() => playHover()}
-                    >
-                      Partial Pay
+                      <Smartphone className="w-4 h-4 mr-2" />
+                      Open Camera
                     </Button>
                   </div>
+                </div>
+              )}
+
+              {/* Bank Transfer */}
+              {paymentMethod === "bank" && (
+                <div className="glass p-4 rounded-lg">
+                  <h3 className="font-semibold mb-3">Bank Transfer</h3>
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3 p-3 glass rounded">
+                      <CreditCardIcon className="w-8 h-8 text-primary" />
+                      <div>
+                        <p className="font-medium">HDFC Bank</p>
+                        <p className="text-sm text-muted-foreground">**** 4832</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 p-3 glass rounded">
+                      <Banknote className="w-8 h-8 text-secondary" />
+                      <div>
+                        <p className="font-medium">ICICI Bank</p>
+                        <p className="text-sm text-muted-foreground">**** 7291</p>
+                      </div>
+                    </div>
+                    <Button 
+                      variant="outline" 
+                      className="w-full glass"
+                      onClick={() => {
+                        playClick();
+                        alert("In a real app, this would open your banking app");
+                      }}
+                    >
+                      Add New Account
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div className="space-y-3">
+                <Button 
+                  className="w-full glass-strong hover-scale text-foreground font-display py-6 text-lg"
+                  onClick={handlePayNow}
+                  disabled={isProcessing || (paymentMethod === "upi" && !upiId)}
+                >
+                  {isProcessing ? (
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                      Processing...
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <Shield className="w-5 h-5" />
+                      Pay ₹{amount.toLocaleString()}
+                    </div>
+                  )}
+                </Button>
+                
+                <div className="grid grid-cols-2 gap-2">
+                  <Button 
+                    variant="outline" 
+                    className="glass hover-scale"
+                    onClick={() => {
+                      playClick();
+                      setShowPaymentScreen(false);
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    className="glass hover-scale"
+                    onClick={() => playClick()}
+                  >
+                    Pay Later
+                  </Button>
                 </div>
               </div>
             </div>
