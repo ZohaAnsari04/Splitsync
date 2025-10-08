@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Keyboard, Sparkles, Users, Plus, X } from "lucide-react";
+import { Keyboard, Sparkles, Users, Plus, X, Mic, MicOff, Volume2 } from "lucide-react";
 import { SplitOptions } from "./SplitOptions";
 import { ParticipantSelector } from "./ParticipantSelector";
 import { toast } from "sonner";
@@ -23,7 +23,7 @@ interface AddExpenseModalProps {
 }
 
 export const AddExpenseModal = ({ open, onOpenChange, onExpenseAdded }: AddExpenseModalProps) => {
-  const [inputMode, setInputMode] = useState<"manual">("manual");
+  const [inputMode, setInputMode] = useState<"manual" | "voice">("manual");
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState("");
@@ -34,7 +34,11 @@ export const AddExpenseModal = ({ open, onOpenChange, onExpenseAdded }: AddExpen
   ]);
   const [showAddParticipantForm, setShowAddParticipantForm] = useState(false);
   const [newParticipantName, setNewParticipantName] = useState("");
-  const { playClick, playHover } = useSound();
+  const [isListening, setIsListening] = useState(false);
+  const [transcript, setTranscript] = useState("");
+  const [isProcessing, setIsProcessing] = useState(false);
+  const recognitionRef = useRef<any>(null);
+  const { playClick, playHover, playNotification } = useSound();
 
   const colors = [
     "from-yellow-500 to-orange-500",
@@ -48,6 +52,151 @@ export const AddExpenseModal = ({ open, onOpenChange, onExpenseAdded }: AddExpen
     "from-amber-500 to-yellow-500",
     "from-lime-500 to-green-500"
   ];
+
+  // Initialize speech recognition
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      
+      if (SpeechRecognition) {
+        recognitionRef.current = new SpeechRecognition();
+        recognitionRef.current.continuous = false;
+        recognitionRef.current.interimResults = true;
+        recognitionRef.current.lang = 'en-US'; // Changed to US English for better compatibility
+        
+        recognitionRef.current.onresult = (event: any) => {
+          const transcript = Array.from(event.results)
+            .map((result: any) => result[0])
+            .map((result) => result.transcript)
+            .join('');
+          setTranscript(transcript);
+        };
+        
+        recognitionRef.current.onend = () => {
+          setIsListening(false);
+        };
+        
+        recognitionRef.current.onerror = (event: any) => {
+          console.error('Speech recognition error', event.error);
+          setIsListening(false);
+          toast.error("Speech recognition error: " + event.error);
+        };
+      }
+    }
+    
+    return () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+    };
+  }, []);
+
+  // Process voice command when transcript changes
+  useEffect(() => {
+    if (transcript && !isListening) {
+      processVoiceCommand(transcript);
+    }
+  }, [transcript, isListening]);
+
+  // Parse voice command and extract expense details
+  const processVoiceCommand = (command: string) => {
+    setIsProcessing(true);
+    
+    try {
+      // Example command: "Add ₹200 chai bill by Raj"
+      // Extract amount (₹ followed by number)
+      const amountMatch = command.match(/(?:₹|rs|rupees?)\s*(\d+)/i);
+      const extractedAmount = amountMatch ? amountMatch[1] : "";
+      
+      // Extract title (words between "Add" and "by" or at the end)
+      let extractedTitle = "";
+      const titleMatch = command.match(/add.*?(?:₹\d+|rs\d+|rupees?\s*\d+)\s*(.*?)(?:\s+by|$)/i);
+      if (titleMatch && titleMatch[1]) {
+        extractedTitle = titleMatch[1].trim();
+      } else {
+        // Fallback: get words after amount
+        const afterAmountMatch = command.match(/(?:₹|rs|rupees?)\s*\d+\s*(.*)/i);
+        if (afterAmountMatch && afterAmountMatch[1]) {
+          extractedTitle = afterAmountMatch[1].replace(/by.*$/i, '').trim();
+        }
+      }
+      
+      // Extract participant name (after "by")
+      const participantMatch = command.match(/by\s+(.+)/i);
+      const participantName = participantMatch ? participantMatch[1].trim() : "";
+      
+      // Update state with extracted values
+      if (extractedAmount) setAmount(extractedAmount);
+      if (extractedTitle) setTitle(extractedTitle);
+      
+      // Add participant if mentioned
+      let updatedParticipants = [...participants];
+      if (participantName) {
+        // Check if participant already exists
+        const existingParticipant = updatedParticipants.find(p => 
+          p.name.toLowerCase() === participantName.toLowerCase()
+        );
+        
+        if (!existingParticipant) {
+          const randomColor = colors[Math.floor(Math.random() * colors.length)];
+          updatedParticipants = [
+            ...updatedParticipants,
+            {
+              id: updatedParticipants.length + 1,
+              name: participantName,
+              avatar: participantName.charAt(0).toUpperCase(),
+              color: randomColor,
+            },
+          ];
+          setParticipants(updatedParticipants);
+        }
+      }
+      
+      // Automatically add expense if all required fields are present
+      if (extractedTitle && extractedAmount) {
+        // Use setTimeout to ensure state updates are processed
+        setTimeout(() => {
+          handleAddExpense();
+        }, 100);
+      }
+      
+      playNotification(); // Play notification sound when processing is complete
+      toast.success("Voice command processed! Expense will be added automatically.");
+    } catch (error) {
+      console.error('Error processing voice command:', error);
+      toast.error("Failed to process voice command. Please try again.");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const startListening = () => {
+    if (recognitionRef.current) {
+      setTranscript("");
+      try {
+        recognitionRef.current.start();
+        setIsListening(true);
+        playClick();
+      } catch (error) {
+        console.error('Error starting speech recognition:', error);
+        toast.error("Failed to start voice recognition. Please check your browser settings.");
+      }
+    } else {
+      toast.error("Speech recognition is not supported in your browser. Please try Chrome, Edge, or Safari.");
+    }
+  };
+
+  const stopListening = () => {
+    if (recognitionRef.current) {
+      try {
+        recognitionRef.current.stop();
+        setIsListening(false);
+        playClick();
+      } catch (error) {
+        console.error('Error stopping speech recognition:', error);
+      }
+    }
+  };
 
   const addParticipant = () => {
     playClick();
@@ -109,6 +258,7 @@ export const AddExpenseModal = ({ open, onOpenChange, onExpenseAdded }: AddExpen
     setCategory("");
     setShowAddParticipantForm(false);
     setNewParticipantName("");
+    setTranscript("");
   };
 
   return (
@@ -122,10 +272,14 @@ export const AddExpenseModal = ({ open, onOpenChange, onExpenseAdded }: AddExpen
         </DialogHeader>
 
         <Tabs value={inputMode} onValueChange={(v) => setInputMode(v as typeof inputMode)} className="w-full">
-          <TabsList className="grid w-full grid-cols-1 glass mb-6">
+          <TabsList className="grid w-full grid-cols-2 glass mb-6">
             <TabsTrigger value="manual" className="font-display">
               <Keyboard className="w-4 h-4 mr-2" />
               Manual
+            </TabsTrigger>
+            <TabsTrigger value="voice" className="font-display">
+              <Mic className="w-4 h-4 mr-2" />
+              Voice
             </TabsTrigger>
           </TabsList>
 
@@ -183,10 +337,66 @@ export const AddExpenseModal = ({ open, onOpenChange, onExpenseAdded }: AddExpen
               </div>
             </div>
           </TabsContent>
+
+          <TabsContent value="voice" className="space-y-6 animate-slide-up">
+            <div className="space-y-4">
+              <div className="text-center p-6 glass rounded-lg border border-primary/20">
+                <Volume2 className="w-12 h-12 text-primary mx-auto mb-4" />
+                <h3 className="text-lg font-semibold mb-2">Voice Input</h3>
+                <p className="text-muted-foreground mb-4">
+                  Say something like: "Add ₹200 chai bill by Raj"
+                </p>
+                
+                <div className="flex justify-center mb-4">
+                  <Button
+                    size="lg"
+                    className={`rounded-full w-24 h-24 ${isListening ? 'glass-strong animate-pulse' : 'glass'}`}
+                    onClick={isListening ? stopListening : startListening}
+                  >
+                    {isListening ? (
+                      <MicOff className="w-8 h-8" />
+                    ) : (
+                      <Mic className="w-8 h-8" />
+                    )}
+                  </Button>
+                </div>
+                
+                {transcript && (
+                  <div className="glass p-4 rounded-lg mt-4">
+                    <p className="text-sm text-muted-foreground mb-2">You said:</p>
+                    <p className="font-medium">{transcript}</p>
+                  </div>
+                )}
+                
+                {isProcessing && (
+                  <div className="flex items-center justify-center gap-2 mt-4">
+                    <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                    <span>Processing...</span>
+                  </div>
+                )}
+              </div>
+              
+              <div className="glass p-4 rounded-lg">
+                <h4 className="font-semibold mb-2">Examples:</h4>
+                <ul className="text-sm space-y-1 text-muted-foreground">
+                  <li>• "Add ₹200 chai bill by Raj"</li>
+                  <li>• "Add Rs 500 dinner expense by Alice"</li>
+                  <li>• "Add rupees 1000 shopping by Bob"</li>
+                </ul>
+              </div>
+              
+              <div className="glass p-4 rounded-lg">
+                <h4 className="font-semibold mb-2">Browser Support:</h4>
+                <p className="text-sm text-muted-foreground">
+                  Voice input works best in Chrome, Edge, and Safari browsers.
+                </p>
+              </div>
+            </div>
+          </TabsContent>
         </Tabs>
 
         {/* Show expense details if any input exists */}
-        {(title || amount) && (
+        {(title || amount || inputMode === "voice") && (
           <div className="space-y-6 animate-slide-up">
             <div className="glass p-4 rounded-lg border border-accent/30">
               <div className="flex items-center gap-2 mb-3">
@@ -261,6 +471,7 @@ export const AddExpenseModal = ({ open, onOpenChange, onExpenseAdded }: AddExpen
               <Button
                 onClick={handleAddExpense}
                 className="flex-1 glass-strong glow-purple hover-scale text-foreground"
+                disabled={!title || !amount}
                 onMouseEnter={() => playHover()}
               >
                 Add Expense
