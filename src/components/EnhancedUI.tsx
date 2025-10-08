@@ -297,10 +297,10 @@ export const EnhancedUI = ({ onBack }: { onBack: () => void }) => {
               </div>
               
               <div className="flex gap-3">
-                <Button className="glass-strong hover-scale">
+                <Button className="glass-strong hover-scale text-foreground">
                   Enable Offline Mode
                 </Button>
-                <Button variant="outline" className="glass">
+                <Button variant="outline" className="glass text-foreground">
                   Sync Now
                 </Button>
               </div>
