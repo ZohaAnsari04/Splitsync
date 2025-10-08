@@ -1,13 +1,14 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, TrendingUp, Users, Wallet, Zap, BarChart3, Trophy, PieChart, Smartphone, Shield, Settings, Users as UsersIcon } from "lucide-react";
+import { Plus, TrendingUp, Users, Wallet, Zap, BarChart3, Trophy, PieChart, Smartphone, Shield, Settings, Users as UsersIcon, Bell } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import logo from "@/assets/logo.png";
 import heroBg from "@/assets/hero-bg.png";
 import { useTheme } from "next-themes";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSound } from "@/hooks/useSound";
 import { BalanceSummary } from "./BalanceSummary";
+import { PaymentReminder } from "./PaymentReminder";
 
 interface DashboardProps {
   onAddExpense: () => void;
@@ -45,6 +46,7 @@ export const Dashboard = ({
 }: DashboardProps) => {
   const { theme, resolvedTheme } = useTheme();
   const { playClick, playHover } = useSound();
+  const [showPaymentReminder, setShowPaymentReminder] = useState(false);
   
   useEffect(() => {
     console.log("Dashboard - Current theme:", theme);
@@ -137,7 +139,7 @@ export const Dashboard = ({
         </header>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <Button
             onClick={() => {
               playClick();
@@ -162,6 +164,21 @@ export const Dashboard = ({
           >
             <BarChart3 className="w-6 h-6 mr-3" />
             View Analytics
+          </Button>
+          
+          {/* Fun Payment Reminder Button */}
+          <Button
+            variant="outline"
+            onClick={() => {
+              playClick();
+              setShowPaymentReminder(true);
+            }}
+            className="h-24 text-lg font-display glass hover-scale glow-purple border-2 border-primary/30 hover:border-primary/60 transition-all relative overflow-hidden"
+            onMouseEnter={() => playHover()}
+          >
+            <Bell className="w-6 h-6 mr-3" />
+            Payment Reminder
+            <span className="absolute top-2 right-2 w-3 h-3 bg-red-500 rounded-full animate-ping"></span>
           </Button>
         </div>
 
@@ -230,6 +247,21 @@ export const Dashboard = ({
         {/* Balance Summary */}
         <BalanceSummary balances={sampleBalances} />
       </div>
+      
+      {/* Payment Reminder Modal */}
+      {showPaymentReminder && (
+        <PaymentReminder
+          debtorName="You"
+          creditorName="Alice"
+          amount={300}
+          onPayNow={() => {
+            setShowPaymentReminder(false);
+            // In a real app, this would update the balance
+            alert("Payment successful! Balance updated.");
+          }}
+          onDismiss={() => setShowPaymentReminder(false)}
+        />
+      )}
     </div>
   );
 };

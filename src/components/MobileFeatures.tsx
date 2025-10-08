@@ -2,11 +2,9 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { 
-  Scan, 
   Fingerprint, 
   Bell, 
   SquareLibrary,
-  Camera,
   Smartphone,
   Eye,
   EyeOff,
@@ -34,33 +32,8 @@ export const MobileFeatures = ({ onBack }: { onBack: () => void }) => {
           </Button>
         </div>
 
-        {/* Camera Receipt Scanning */}
+        {/* Biometric Authentication */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          <Card className="glass-strong p-6 hover-scale">
-            <div className="flex items-center gap-3 mb-4">
-              <Scan className="w-8 h-8 text-primary" />
-              <h2 className="text-xl font-display gradient-text">Receipt Scanning</h2>
-            </div>
-            <p className="text-muted-foreground mb-4">
-              Use your camera to scan receipts and automatically extract expense details using OCR technology.
-            </p>
-            
-            <div className="bg-secondary/20 rounded-lg aspect-video mb-4 flex flex-col items-center justify-center p-6 text-center">
-              <Camera className="w-12 h-12 text-muted-foreground mb-3" />
-              <p className="text-muted-foreground mb-4">Camera Preview</p>
-              <Button className="glass-strong hover-scale">
-                <Scan className="w-4 h-4 mr-2" />
-                Scan Receipt
-              </Button>
-            </div>
-            
-            <div className="flex items-center gap-2 text-sm">
-              <Badge className="bg-green-500/20 text-green-500">OCR Enabled</Badge>
-              <span className="text-muted-foreground">Extracts amount, date, and merchant</span>
-            </div>
-          </Card>
-
-          {/* Biometric Authentication */}
           <Card className="glass-strong p-6 hover-scale">
             <div className="flex items-center gap-3 mb-4">
               <Fingerprint className="w-8 h-8 text-secondary" />
@@ -115,59 +88,59 @@ export const MobileFeatures = ({ onBack }: { onBack: () => void }) => {
               </p>
             </div>
           </Card>
-        </div>
 
-        {/* Push Notifications */}
-        <Card className="glass-strong p-6 mb-8 hover-scale">
-          <div className="flex items-center gap-3 mb-4">
-            <Bell className="w-8 h-8 text-accent" />
-            <h2 className="text-xl font-display gradient-text">Push Notifications</h2>
-          </div>
-          <p className="text-muted-foreground mb-4">
-            Stay on top of your expenses with timely reminders and updates.
-          </p>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div className="p-4 glass rounded">
-              <div className="flex items-center justify-between mb-2">
-                <span>Payment Reminders</span>
-                <Button 
-                  variant={notificationsEnabled ? "default" : "outline"}
-                  onClick={() => setNotificationsEnabled(!notificationsEnabled)}
-                  className={notificationsEnabled ? "glass-strong" : "glass"}
-                  size="sm"
-                >
-                  {notificationsEnabled ? "On" : "Off"}
-                </Button>
+          {/* Push Notifications */}
+          <Card className="glass-strong p-6 hover-scale">
+            <div className="flex items-center gap-3 mb-4">
+              <Bell className="w-8 h-8 text-accent" />
+              <h2 className="text-xl font-display gradient-text">Push Notifications</h2>
+            </div>
+            <p className="text-muted-foreground mb-4">
+              Stay on top of your expenses with timely reminders and updates.
+            </p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div className="p-4 glass rounded">
+                <div className="flex items-center justify-between mb-2">
+                  <span>Payment Reminders</span>
+                  <Button 
+                    variant={notificationsEnabled ? "default" : "outline"}
+                    onClick={() => setNotificationsEnabled(!notificationsEnabled)}
+                    className={notificationsEnabled ? "glass-strong" : "glass"}
+                    size="sm"
+                  >
+                    {notificationsEnabled ? "On" : "Off"}
+                  </Button>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Get notified when payments are due
+                </p>
               </div>
-              <p className="text-sm text-muted-foreground">
-                Get notified when payments are due
-              </p>
+              
+              <div className="p-4 glass rounded">
+                <div className="flex items-center justify-between mb-2">
+                  <span>Expense Reports</span>
+                  <Button variant="outline" className="glass" size="sm">
+                    On
+                  </Button>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Weekly spending summaries
+                </p>
+              </div>
             </div>
             
-            <div className="p-4 glass rounded">
-              <div className="flex items-center justify-between mb-2">
-                <span>Expense Reports</span>
-                <Button variant="outline" className="glass" size="sm">
-                  On
-                </Button>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                Weekly spending summaries
-              </p>
+            <div className="flex gap-3">
+              <Button className="glass-strong hover-scale">
+                <Bell className="w-4 h-4 mr-2" />
+                Test Notification
+              </Button>
+              <Button variant="outline" className="glass">
+                Notification Settings
+              </Button>
             </div>
-          </div>
-          
-          <div className="flex gap-3">
-            <Button className="glass-strong hover-scale">
-              <Bell className="w-4 h-4 mr-2" />
-              Test Notification
-            </Button>
-            <Button variant="outline" className="glass">
-              Notification Settings
-            </Button>
-          </div>
-        </Card>
+          </Card>
+        </div>
 
         {/* Widget Support */}
         <Card className="glass-strong p-6 hover-scale">
