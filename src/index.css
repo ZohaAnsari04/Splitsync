@@ -1,0 +1,204 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Light Mode - Pastel Holographic with relation to dark theme */
+    --background: 240 30% 95%;
+    --foreground: 240 50% 15%;
+
+    --card: 240 25% 90%;
+    --card-foreground: 240 50% 15%;
+
+    --popover: 240 25% 92%;
+    --popover-foreground: 240 50% 15%;
+
+    --primary: 280 70% 55%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 190 60% 60%;
+    --secondary-foreground: 240 50% 15%;
+
+    --muted: 240 20% 85%;
+    --muted-foreground: 240 20% 45%;
+
+    --accent: 150 55% 50%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 240 25% 80%;
+    --input: 240 25% 85%;
+    --ring: 280 70% 55%;
+
+    --radius: 1rem;
+
+    /* Web3 Neon Colors - Light Mode (related to dark theme) */
+    --neon-purple: 280 70% 55%;
+    --neon-cyan: 190 60% 60%;
+    --neon-green: 150 55% 50%;
+    --neon-pink: 320 65% 60%;
+    
+    /* Glassmorphism */
+    --glass-bg: 240 25% 95% / 0.7;
+    --glass-border: 240 25% 75%;
+    
+    /* Gradients */
+    --gradient-neon: linear-gradient(135deg, hsl(280 70% 55%), hsl(190 60% 60%), hsl(150 55% 50%));
+    --gradient-subtle: linear-gradient(180deg, hsl(240 30% 95%), hsl(240 25% 90%));
+    
+    /* Shadows & Glows */
+    --shadow-glow: 0 0 40px hsl(280 70% 55% / 0.3);
+    --shadow-glass: 0 8px 32px 0 hsl(240 30% 20% / 0.1);
+    
+    --sidebar-background: 240 25% 90%;
+    --sidebar-foreground: 240 50% 20%;
+    --sidebar-primary: 280 70% 55%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 20% 85%;
+    --sidebar-accent-foreground: 240 50% 20%;
+    --sidebar-border: 240 25% 80%;
+    --sidebar-ring: 280 70% 55%;
+  }
+
+  .dark {
+    /* Dark Mode - Neon on Midnight */
+    --background: 240 50% 6%;
+    --foreground: 0 0% 98%;
+
+    --card: 240 40% 10%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 240 45% 8%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 280 80% 65%;
+    --primary-foreground: 240 50% 6%;
+
+    --secondary: 190 75% 55%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 240 30% 15%;
+    --muted-foreground: 240 10% 60%;
+
+    --accent: 150 70% 50%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 240 30% 18%;
+    --input: 240 30% 18%;
+    --ring: 280 80% 65%;
+
+    /* Web3 Neon Colors - Dark Mode */
+    --neon-purple: 280 80% 65%;
+    --neon-cyan: 190 75% 55%;
+    --neon-green: 150 70% 50%;
+    --neon-pink: 320 80% 60%;
+    
+    /* Glassmorphism */
+    --glass-bg: 240 40% 10% / 0.6;
+    --glass-border: 240 30% 25%;
+    
+    /* Gradients */
+    --gradient-neon: linear-gradient(135deg, hsl(280 80% 65%), hsl(190 75% 55%), hsl(150 70% 50%));
+    --gradient-subtle: linear-gradient(180deg, hsl(240 50% 8%), hsl(240 45% 6%));
+    
+    /* Shadows & Glows */
+    --shadow-glow: 0 0 40px hsl(280 80% 65% / 0.4);
+    --shadow-glass: 0 8px 32px 0 hsl(0 0% 0% / 0.4);
+    
+    --sidebar-background: 240 50% 8%;
+    --sidebar-foreground: 0 0% 95%;
+    --sidebar-primary: 280 80% 65%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 30% 15%;
+    --sidebar-accent-foreground: 0 0% 95%;
+    --sidebar-border: 240 30% 18%;
+    --sidebar-ring: 280 80% 65%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Space Grotesk', monospace;
+  }
+  
+  h1, h2, h3, h4, h5, h6, .font-display {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+  }
+  
+  .font-mono {
+    font-family: 'Space Grotesk', monospace;
+  }
+}
+
+@layer utilities {
+  /* Glassmorphism Effect */
+  .glass {
+    background: hsl(var(--glass-bg));
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid hsl(var(--glass-border));
+    box-shadow: var(--shadow-glass);
+  }
+  
+  .glass-strong {
+    background: hsl(var(--glass-bg));
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid hsl(var(--glass-border));
+    box-shadow: var(--shadow-glass), var(--shadow-glow);
+  }
+  
+  /* Neon Glow Effects */
+  .glow-purple {
+    box-shadow: 0 0 20px hsl(var(--neon-purple) / 0.5), 0 0 40px hsl(var(--neon-purple) / 0.3);
+  }
+  
+  .glow-cyan {
+    box-shadow: 0 0 20px hsl(var(--neon-cyan) / 0.5), 0 0 40px hsl(var(--neon-cyan) / 0.3);
+  }
+  
+  .glow-green {
+    box-shadow: 0 0 20px hsl(var(--neon-green) / 0.5), 0 0 40px hsl(var(--neon-green) / 0.3);
+  }
+  
+  /* Gradient Text */
+  .gradient-text {
+    background: var(--gradient-neon);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  /* Hover Scale */
+  .hover-scale {
+    transition: transform 0.2s ease-out;
+  }
+  
+  .hover-scale:hover {
+    transform: scale(1.05);
+  }
+  
+  /* Neon Border Animation */
+  .neon-border {
+    position: relative;
+    border: 2px solid transparent;
+    background: linear-gradient(hsl(var(--background)), hsl(var(--background))) padding-box,
+                var(--gradient-neon) border-box;
+  }
+}
