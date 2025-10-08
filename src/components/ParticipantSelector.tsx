@@ -45,7 +45,8 @@ export const ParticipantSelector = ({
                 size="icon"
                 variant="destructive"
                 className="absolute -top-2 -right-2 w-6 h-6 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   playClick();
                   onRemoveParticipant(participant.id);
                 }}

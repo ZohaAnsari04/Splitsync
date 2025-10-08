@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Keyboard, Sparkles, Users } from "lucide-react";
+import { Keyboard, Sparkles, Users, Plus, X } from "lucide-react";
 import { SplitOptions } from "./SplitOptions";
 import { ParticipantSelector } from "./ParticipantSelector";
 import { toast } from "sonner";
@@ -32,18 +32,9 @@ export const AddExpenseModal = ({ open, onOpenChange, onExpenseAdded }: AddExpen
     { id: 2, name: "Alice", avatar: "A", color: "from-cyan-500 to-blue-500" },
     { id: 3, name: "Bob", avatar: "B", color: "from-green-500 to-teal-500" },
   ]);
+  const [showAddParticipantForm, setShowAddParticipantForm] = useState(false);
+  const [newParticipantName, setNewParticipantName] = useState("");
   const { playClick, playHover } = useSound();
-
-  // Expanded list of 50+ names for participants
-  const participantNames = [
-    "Charlie", "Diana", "Eve", "Frank", "Grace", "Henry", "Ivy", "Jack", "Kate", "Liam",
-    "Mia", "Noah", "Olivia", "Peter", "Quinn", "Ruby", "Sam", "Tina", "Uma", "Victor",
-    "Wendy", "Xander", "Yara", "Zane", "Ava", "Ben", "Chloe", "Daniel", "Emma", "Finn",
-    "Gina", "Harry", "Isla", "James", "Kiara", "Leo", "Maya", "Nathan", "Oscar", "Piper",
-    "Quincy", "Riley", "Sophie", "Thomas", "Ursula", "Vincent", "Willow", "Xavier", "Yasmine", "Zoe",
-    "Aaron", "Bella", "Caleb", "Daisy", "Ethan", "Fiona", "George", "Hazel", "Ian", "Jasmine",
-    "Kevin", "Luna", "Marcus", "Nina", "Owen", "Penelope", "Quentin", "Rebecca", "Sebastian", "Tessa"
-  ];
 
   const colors = [
     "from-yellow-500 to-orange-500",
@@ -61,18 +52,30 @@ export const AddExpenseModal = ({ open, onOpenChange, onExpenseAdded }: AddExpen
   const addParticipant = () => {
     playClick();
     
-    const randomName = participantNames[Math.floor(Math.random() * participantNames.length)];
-    const randomColor = colors[Math.floor(Math.random() * colors.length)];
+    // If form is not shown, show it
+    if (!showAddParticipantForm) {
+      setShowAddParticipantForm(true);
+      return;
+    }
     
-    setParticipants([
-      ...participants,
-      {
-        id: participants.length + 1,
-        name: randomName,
-        avatar: randomName[0],
-        color: randomColor,
-      },
-    ]);
+    // If form is shown and we have a name, add the participant
+    if (newParticipantName.trim()) {
+      const randomColor = colors[Math.floor(Math.random() * colors.length)];
+      
+      setParticipants([
+        ...participants,
+        {
+          id: participants.length + 1,
+          name: newParticipantName.trim(),
+          avatar: newParticipantName.trim().charAt(0).toUpperCase(),
+          color: randomColor,
+        },
+      ]);
+      
+      // Reset form
+      setNewParticipantName("");
+      setShowAddParticipantForm(false);
+    }
   };
 
   const removeParticipant = (id: number) => {
@@ -80,6 +83,12 @@ export const AddExpenseModal = ({ open, onOpenChange, onExpenseAdded }: AddExpen
     if (participants.length > 1) {
       setParticipants(participants.filter((p) => p.id !== id));
     }
+  };
+
+  const cancelAddParticipant = () => {
+    playClick();
+    setShowAddParticipantForm(false);
+    setNewParticipantName("");
   };
 
   const handleAddExpense = () => {
@@ -98,6 +107,8 @@ export const AddExpenseModal = ({ open, onOpenChange, onExpenseAdded }: AddExpen
     setTitle("");
     setAmount("");
     setCategory("");
+    setShowAddParticipantForm(false);
+    setNewParticipantName("");
   };
 
   return (
@@ -182,6 +193,44 @@ export const AddExpenseModal = ({ open, onOpenChange, onExpenseAdded }: AddExpen
                 <Users className="w-5 h-5 text-accent" />
                 <h3 className="font-display">Select Participants</h3>
               </div>
+              
+              {/* Custom participant form */}
+              {showAddParticipantForm && (
+                <div className="mb-4 p-3 glass rounded-lg border border-primary/20 animate-slide-up">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-sm font-semibold">Add New Participant</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="Enter participant name"
+                      value={newParticipantName}
+                      onChange={(e) => setNewParticipantName(e.target.value)}
+                      className="flex-1 glass border-primary/30 focus:border-primary/60"
+                      autoFocus
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          addParticipant();
+                        }
+                      }}
+                    />
+                    <Button
+                      onClick={addParticipant}
+                      className="glass-strong"
+                      disabled={!newParticipantName.trim()}
+                    >
+                      <Plus className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={cancelAddParticipant}
+                      className="glass"
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+              )}
+              
               <ParticipantSelector 
                 participants={participants} 
                 onAddParticipant={addParticipant} 
