@@ -10,10 +10,12 @@ import { AdvancedGamification } from "@/components/AdvancedGamification";
 import { SecurityPrivacy } from "@/components/SecurityPrivacy";
 import { AccessibilityImprovements } from "@/components/AccessibilityImprovements";
 import { NavigationMenu } from "@/components/NavigationMenu";
+import { ExpenseGroups } from "@/components/ExpenseGroups";
+import { PaymentReminders } from "@/components/PaymentReminders";
 import { useSound } from "@/hooks/useSound";
 import { toast } from "sonner";
 
-type View = "splash" | "dashboard" | "analytics" | "gamification" | "financial-insights" | "enhanced-ui" | "advanced-gamification" | "security-privacy" | "accessibility-improvements";
+type View = "splash" | "dashboard" | "analytics" | "gamification" | "financial-insights" | "enhanced-ui" | "advanced-gamification" | "security-privacy" | "accessibility-improvements" | "expense-groups" | "payment-reminders";
 
 // Define the recent activity type
 interface RecentActivity {
@@ -39,6 +41,7 @@ interface Expense {
   split: number;
   participants: string[];
   date: Date;
+  groupId?: string; // Optional field to associate expense with a group
 }
 
 // Define the streak type
@@ -50,10 +53,26 @@ interface Streak {
 
 // Define the payment reminder type
 interface PaymentReminder {
+  id: string;
   debtorName: string;
   creditorName: string;
   amount: number;
   dueDate: Date;
+  groupId?: string;
+  expenseId?: string;
+  status: "pending" | "overdue" | "completed";
+}
+
+// Define the expense group type
+interface ExpenseGroup {
+  id: string;
+  name: string;
+  description?: string;
+  color: string;
+  participants: string[];
+  createdDate: Date;
+  totalExpenses: number;
+  totalAmount: number;
 }
 
 const Index = () => {
@@ -90,7 +109,93 @@ const Index = () => {
   
   // Sample expenses data
   const [expenses, setExpenses] = useState<Expense[]>([]);
-  
+
+  // Expense groups data with localStorage persistence
+  const [expenseGroups, setExpenseGroups] = useState<ExpenseGroup[]>(() => {
+    const savedGroups = localStorage.getItem('expenseGroups');
+    if (savedGroups) {
+      try {
+        const parsedGroups = JSON.parse(savedGroups);
+        // Convert date strings back to Date objects
+        return parsedGroups.map((group: any) => ({
+          ...group,
+          createdDate: new Date(group.createdDate)
+        }));
+      } catch (e) {
+        console.error('Failed to parse expense groups from localStorage', e);
+      }
+    }
+    // Default sample groups
+    return [
+      {
+        id: 'group-1',
+        name: 'Roommates',
+        description: 'Monthly shared expenses for apartment',
+        color: 'from-blue-500 to-cyan-500',
+        participants: ['You', 'Alice', 'Bob'],
+        createdDate: new Date(),
+        totalExpenses: 3,
+        totalAmount: 4500
+      },
+      {
+        id: 'group-2',
+        name: 'Trip to Goa',
+        description: 'Vacation expenses for Goa trip',
+        color: 'from-green-500 to-emerald-500',
+        participants: ['You', 'Alice', 'Charlie'],
+        createdDate: new Date(),
+        totalExpenses: 2,
+        totalAmount: 12000
+      }
+    ];
+  });
+
+  // Save expense groups to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('expenseGroups', JSON.stringify(expenseGroups));
+  }, [expenseGroups]);
+
+  // Function to create a new expense group
+  const createExpenseGroup = (name: string, description: string, participants: string[], color: string) => {
+    const newGroup: ExpenseGroup = {
+      id: `group-${Date.now()}`,
+      name,
+      description,
+      color,
+      participants,
+      createdDate: new Date(),
+      totalExpenses: 0,
+      totalAmount: 0
+    };
+
+    setExpenseGroups(prev => [...prev, newGroup]);
+    toast.success(`Expense group "${name}" created successfully!`, {
+      description: `Added ${participants.length} participants`,
+      duration: 4000,
+    });
+  };
+
+  // Function to update an expense group
+  const updateExpenseGroup = (groupId: string, updates: Partial<ExpenseGroup>) => {
+    setExpenseGroups(prev => prev.map(group =>
+      group.id === groupId ? { ...group, ...updates } : group
+    ));
+    toast.success("Expense group updated successfully!");
+  };
+
+  // Function to delete an expense group
+  const deleteExpenseGroup = (groupId: string) => {
+    const groupToDelete = expenseGroups.find(group => group.id === groupId);
+    setExpenseGroups(prev => prev.filter(group => group.id !== groupId));
+
+    // Remove group association from expenses
+    setExpenses(prev => prev.map(expense =>
+      expense.groupId === groupId ? { ...expense, groupId: undefined } : expense
+    ));
+
+    toast.success(`Expense group "${groupToDelete?.name}" deleted successfully!`);
+  };
+
   // Payment reminders data with localStorage persistence
   const [paymentReminders, setPaymentReminders] = useState<PaymentReminder[]>(() => {
     const savedReminders = localStorage.getItem('paymentReminders');
@@ -140,32 +245,41 @@ const Index = () => {
   }, [recentActivity]);
   
   // Add a new expense to recent activity
-  const addExpenseToActivity = (name: string, amount: number, split: number) => {
+  const addExpenseToActivity = (name: string, amount: number, participants: string[], groupId?: string) => {
     const newActivity: RecentActivity = {
       name,
       amount: `₹${amount.toLocaleString()}`,
-      split,
+      split: participants.length,
       status: "pending"
     };
-    
+
     setRecentActivity(prev => [newActivity, ...prev.slice(0, 9)]); // Keep only the last 10 activities
-    
-    // Add the expense to the expenses list with proper participants
-    const defaultParticipants = ["You", "Alice", "Bob"];
-    const actualParticipants = split <= defaultParticipants.length 
-      ? defaultParticipants.slice(0, split) 
-      : [...defaultParticipants, ...Array(split - defaultParticipants.length).fill("Friend")];
-    
+
+    // Add the expense to the expenses list with the provided participants
     const newExpense: Expense = {
       id: Date.now().toString(),
       name,
       amount,
-      split,
-      participants: actualParticipants,
-      date: new Date()
+      split: participants.length,
+      participants: participants,
+      date: new Date(),
+      groupId
     };
-    
+
     setExpenses(prev => [...prev, newExpense]);
+
+    // Update group totals if expense belongs to a group
+    if (groupId) {
+      setExpenseGroups(prev => prev.map(group =>
+        group.id === groupId
+          ? {
+              ...group,
+              totalExpenses: group.totalExpenses + 1,
+              totalAmount: group.totalAmount + amount
+            }
+          : group
+      ));
+    }
     
     // Update streak when expense is added
     updateStreak();
@@ -270,23 +384,27 @@ const Index = () => {
   // Function to update payment reminders when a new expense is added
   const updatePaymentReminders = (expense: Expense) => {
     // Create payment reminders for each participant who owes money
-    const amountPerPerson = expense.amount / expense.split;
-    const payer = "You"; // Assume "You" is the payer
-    
+    const amountPerPerson = expense.amount / expense.participants.length;
+    const payer = expense.participants[0]; // Assume first participant paid
+
     // Create reminders for each participant (except the payer)
     const newReminders: PaymentReminder[] = [];
-    
+
     expense.participants.forEach(participant => {
       if (participant !== payer) {
         newReminders.push({
+          id: `${expense.id}-${participant}-${payer}`,
           debtorName: participant,
           creditorName: payer,
           amount: amountPerPerson,
-          dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // Due in 7 days
+          dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // Due in 7 days
+          groupId: expense.groupId,
+          expenseId: expense.id,
+          status: "pending"
         });
       }
     });
-    
+
     // Add all new reminders to the existing ones
     setPaymentReminders(prev => [...prev, ...newReminders]);
   };
@@ -309,6 +427,35 @@ const Index = () => {
         return <SecurityPrivacy onBack={() => setCurrentView("dashboard")} />;
       case "accessibility-improvements":
         return <AccessibilityImprovements onBack={() => setCurrentView("dashboard")} />;
+      case "expense-groups":
+        return (
+          <ExpenseGroups
+            groups={expenseGroups}
+            expenses={expenses}
+            onCreateGroup={createExpenseGroup}
+            onUpdateGroup={updateExpenseGroup}
+            onDeleteGroup={deleteExpenseGroup}
+            onBack={() => setCurrentView("dashboard")}
+            onExpenseAdded={addExpenseToActivity}
+          />
+        );
+      case "payment-reminders":
+        return (
+          <PaymentReminders
+            paymentReminders={paymentReminders}
+            expenses={expenses}
+            groups={expenseGroups}
+            onBack={() => setCurrentView("dashboard")}
+            onMarkAsPaid={(reminderId) => {
+              setPaymentReminders(prev => prev.map(r =>
+                r.id === reminderId ? { ...r, status: "completed" } : r
+              ));
+            }}
+            onDeleteReminder={(reminderId) => {
+              setPaymentReminders(prev => prev.filter(r => r.id !== reminderId));
+            }}
+          />
+        );
       case "dashboard":
       default:
         return (
@@ -321,6 +468,8 @@ const Index = () => {
             onViewAdvancedGamification={() => setCurrentView("advanced-gamification")}
             onViewSecurityPrivacy={() => setCurrentView("security-privacy")}
             onViewAccessibilityImprovements={() => setCurrentView("accessibility-improvements")}
+            onViewExpenseGroups={() => setCurrentView("expense-groups")}
+            onViewPaymentReminders={() => setCurrentView("payment-reminders")}
             recentActivity={recentActivity}
             balances={balances}
             paymentReminders={paymentReminders}
@@ -362,14 +511,23 @@ const Index = () => {
     playClick();
     setCurrentView("accessibility-improvements");
   };
+  const navigateToExpenseGroups = () => {
+    playClick();
+    setCurrentView("expense-groups");
+  };
+  const navigateToPaymentReminders = () => {
+    playClick();
+    setCurrentView("payment-reminders");
+  };
 
   return (
     <>
       {renderView()}
-      <AddExpenseModal 
-        open={showAddExpense} 
-        onOpenChange={setShowAddExpense} 
+      <AddExpenseModal
+        open={showAddExpense}
+        onOpenChange={setShowAddExpense}
         onExpenseAdded={addExpenseToActivity}
+        expenseGroups={expenseGroups}
       />
       {currentView !== "splash" && (
         <NavigationMenu
@@ -381,6 +539,8 @@ const Index = () => {
           onViewAdvancedGamification={navigateToAdvancedGamification}
           onViewSecurityPrivacy={navigateToSecurityPrivacy}
           onViewAccessibilityImprovements={navigateToAccessibilityImprovements}
+          onViewExpenseGroups={navigateToExpenseGroups}
+          onViewPaymentReminders={navigateToPaymentReminders}
         />
       )}
     </>

@@ -69,19 +69,26 @@ import {
 import { useSound } from "@/hooks/useSound";
 
 interface PaymentReminderProps {
+  id?: string;
   debtorName: string;
   creditorName: string;
   amount: number;
+  dueDate?: Date;
+  groupId?: string;
+  expenseId?: string;
+  status?: "pending" | "overdue" | "completed";
   onPayNow: () => void;
   onDismiss: () => void;
 }
 
-export const PaymentReminder = ({ 
-  debtorName, 
-  creditorName, 
-  amount, 
-  onPayNow, 
-  onDismiss 
+export const PaymentReminder = ({
+  debtorName,
+  creditorName,
+  amount,
+  onPayNow,
+  onDismiss,
+  dueDate,
+  status = "pending"
 }: PaymentReminderProps) => {
   const { playClick, playHover, playNotification } = useSound();
   const [showPaymentScreen, setShowPaymentScreen] = useState(false);

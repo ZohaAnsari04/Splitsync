@@ -2,8 +2,9 @@ import { useState, useRef, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Keyboard, Sparkles, Users, Plus, X, Mic, MicOff, Volume2 } from "lucide-react";
+import { Keyboard, Sparkles, Users, Plus, X, Mic, MicOff, Volume2, FolderOpen } from "lucide-react";
 import { SplitOptions } from "./SplitOptions";
 import { ParticipantSelector } from "./ParticipantSelector";
 import { toast } from "sonner";
@@ -16,17 +17,67 @@ interface Participant {
   color: string;
 }
 
+interface ExpenseGroup {
+  id: string;
+  name: string;
+  description?: string;
+  color: string;
+  participants: string[];
+  createdDate: Date;
+  totalExpenses: number;
+  totalAmount: number;
+}
+
 interface AddExpenseModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onExpenseAdded?: (name: string, amount: number, split: number) => void;
+  onExpenseAdded?: (name: string, amount: number, participants: string[], groupId?: string) => void;
+  expenseGroups?: ExpenseGroup[];
+  preSelectedGroupId?: string;
 }
 
-export const AddExpenseModal = ({ open, onOpenChange, onExpenseAdded }: AddExpenseModalProps) => {
+export const AddExpenseModal = ({ open, onOpenChange, onExpenseAdded, expenseGroups = [], preSelectedGroupId }: AddExpenseModalProps) => {
   const [inputMode, setInputMode] = useState<"manual" | "voice">("manual");
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState("");
+  const [selectedGroupId, setSelectedGroupId] = useState<string>("none");
+
+  // Set selected group and load participants when modal opens or preSelectedGroupId changes
+  useEffect(() => {
+    if (open) {
+      // Modal is opening
+      if (preSelectedGroupId && preSelectedGroupId !== "none") {
+        setSelectedGroupId(preSelectedGroupId);
+
+        // Find the selected group and load its participants
+        const selectedGroup = expenseGroups.find(group => group.id === preSelectedGroupId);
+        if (selectedGroup) {
+          // Convert group participants to the format expected by the modal
+          const groupParticipants: Participant[] = selectedGroup.participants.map((name, index) => ({
+            id: index + 1,
+            name,
+            avatar: name.charAt(0).toUpperCase(),
+            color: colors[index % colors.length] // Use the same color rotation
+          }));
+          setParticipants(groupParticipants);
+        }
+      } else {
+        setSelectedGroupId("none");
+        // Reset to default participants when no group is selected
+        setParticipants([
+          { id: 1, name: "You", avatar: "Y", color: "from-purple-500 to-pink-500" },
+          { id: 2, name: "Alice", avatar: "A", color: "from-cyan-500 to-blue-500" },
+          { id: 3, name: "Bob", avatar: "B", color: "from-green-500 to-teal-500" },
+        ]);
+      }
+    } else {
+      // Modal is closing - reset state for next time
+      setSelectedGroupId("none");
+    }
+  }, [preSelectedGroupId, open, expenseGroups]);
+
+  // Initialize participants state - will be overridden by useEffect if group is pre-selected
   const [participants, setParticipants] = useState<Participant[]>([
     { id: 1, name: "You", avatar: "Y", color: "from-purple-500 to-pink-500" },
     { id: 2, name: "Alice", avatar: "A", color: "from-cyan-500 to-blue-500" },
@@ -262,22 +313,34 @@ export const AddExpenseModal = ({ open, onOpenChange, onExpenseAdded }: AddExpen
       return;
     }
     
-    // Call the onExpenseAdded callback if provided
-    if (onExpenseAdded && title) {
-      // Pass the title, amount, and number of participants to split among
-      onExpenseAdded(title, amountValue, participants.length);
+    // Validate and prepare expense data
+    if (!title) {
+      toast.error("Please enter an expense title.");
+      return;
     }
-    
-    toast.success(`Expense added successfully! Amount: ₹${amountValue.toLocaleString()} split among ${participants.length} participant(s). 💫`);
+
+    // Call the onExpenseAdded callback if provided
+    if (onExpenseAdded) {
+      try {
+        // Pass the title, amount, participants array, and selected group (if any)
+        // Treat "none" as no group selected
+        const groupId = selectedGroupId === "none" ? undefined : selectedGroupId;
+        const participantNames = participants.map(p => p.name);
+        onExpenseAdded(title, amountValue, participantNames, groupId);
+
+        // Show success message and close modal
+        toast.success(`Expense added successfully! Amount: ₹${amountValue.toLocaleString()} split among ${participants.length} participant(s). 💫`);
+
+      } catch (error) {
+        console.error('Error adding expense:', error);
+        toast.error("Failed to add expense. Please try again.");
+        // Don't close modal on error so user can retry
+        return;
+      }
+    }
+
+    // Close modal (this will trigger the onOpenChange callback)
     onOpenChange(false);
-    
-    // Reset form
-    setTitle("");
-    setAmount("");
-    setCategory("");
-    setShowAddParticipantForm(false);
-    setNewParticipantName("");
-    setTranscript("");
   };
 
   return (
@@ -491,6 +554,33 @@ export const AddExpenseModal = ({ open, onOpenChange, onExpenseAdded }: AddExpen
                 Split Method
               </h3>
               <SplitOptions totalAmount={parseFloat(amount) || 0} participants={participants} />
+            </div>
+
+            {/* Expense Group Selection */}
+            <div className="glass p-4 rounded-lg border border-accent/30">
+              <h3 className="font-display mb-3 flex items-center gap-2">
+                <FolderOpen className="w-5 h-5 text-accent" />
+                Expense Group (Optional)
+              </h3>
+              <p className="text-sm text-muted-foreground mb-3">
+                Organize this expense into a group for better tracking and management
+              </p>
+              <Select value={selectedGroupId} onValueChange={setSelectedGroupId}>
+                <SelectTrigger className="glass border-primary/30 focus:border-primary/60">
+                  <SelectValue placeholder="Select a group (optional)" />
+                </SelectTrigger>
+                <SelectContent className="glass-strong">
+                  <SelectItem value="none">No group (individual expense)</SelectItem>
+                  {expenseGroups.map((group) => (
+                    <SelectItem key={group.id} value={group.id}>
+                      <div className="flex items-center gap-2">
+                        <div className={`w-3 h-3 rounded-full bg-gradient-to-br ${group.color}`} />
+                        {group.name}
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="flex gap-3">

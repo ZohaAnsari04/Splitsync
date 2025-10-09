@@ -1,20 +1,25 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, TrendingUp, Users, Wallet, Zap, BarChart3, Trophy, PieChart, Shield, Settings, Users as UsersIcon, Bell } from "lucide-react";
+import { Plus, TrendingUp, Users, Wallet, Zap, BarChart3, Trophy, PieChart, Shield, Settings, Users as UsersIcon, Bell, FolderOpen, Activity } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import logo from "@/assets/logo.png";
 import heroBg from "@/assets/hero-bg.png";
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useSound } from "@/hooks/useSound";
 import { PaymentReminder } from "./PaymentReminder";
+import { toast } from "sonner";
 
 // Define the payment reminder type
 interface PaymentReminder {
+  id: string;
   debtorName: string;
   creditorName: string;
   amount: number;
   dueDate: Date;
+  groupId?: string;
+  expenseId?: string;
+  status: "pending" | "overdue" | "completed";
 }
 
 interface DashboardProps {
@@ -26,6 +31,8 @@ interface DashboardProps {
   onViewAdvancedGamification?: () => void;
   onViewSecurityPrivacy?: () => void;
   onViewAccessibilityImprovements?: () => void;
+  onViewExpenseGroups?: () => void;
+  onViewPaymentReminders?: () => void;
   recentActivity?: {
     name: string;
     amount: string;
@@ -41,20 +48,18 @@ interface DashboardProps {
   paymentReminders?: PaymentReminder[];
 }
 
-export const Dashboard = ({ 
-  onAddExpense, 
-  onViewAnalytics, 
+export const Dashboard = ({
+  onAddExpense,
+  onViewAnalytics,
   onViewGamification,
   onViewFinancialInsights,
   onViewEnhancedUI,
   onViewAdvancedGamification,
   onViewSecurityPrivacy,
   onViewAccessibilityImprovements,
-  recentActivity = [
-    { name: "Dinner at Zomato", amount: "₹1,200", split: 4, status: "pending" },
-    { name: "Movie Tickets", amount: "₹800", split: 2, status: "settled" },
-    { name: "Grocery Shopping", amount: "₹2,450", split: 3, status: "pending" },
-  ],
+  onViewExpenseGroups,
+  onViewPaymentReminders,
+  recentActivity = [],
   balances = [
     { id: 1, from: "You", to: "Alice", amount: 300 },
     { id: 2, from: "Bob", to: "You", amount: 150 },
@@ -77,6 +82,18 @@ export const Dashboard = ({
 
   // Feature categories for navigation
   const featureCategories = [
+    {
+      name: "Payment Reminders",
+      icon: <Bell className="w-5 h-5" />,
+      action: onViewPaymentReminders,
+      color: "bg-purple-500/20 text-purple-500"
+    },
+    {
+      name: "Expense Groups",
+      icon: <FolderOpen className="w-5 h-5" />,
+      action: onViewExpenseGroups,
+      color: "bg-green-500/20 text-green-500"
+    },
     {
       name: "Financial Insights",
       icon: <PieChart className="w-5 h-5" />,
@@ -114,25 +131,55 @@ export const Dashboard = ({
     if (paymentReminders && paymentReminders.length > 0) {
       // Get the next due payment (closest to current date)
       const now = new Date();
-      const upcomingPayments = paymentReminders.filter(reminder => reminder.dueDate > now);
-      
+      const upcomingPayments = paymentReminders.filter(reminder =>
+        reminder.status === "pending" && reminder.dueDate > now
+      );
+
       if (upcomingPayments.length > 0) {
         const nextPayment = upcomingPayments.reduce((closest, current) => {
           if (!closest) return current;
           return current.dueDate < closest.dueDate ? current : closest;
         }, upcomingPayments[0]);
-        
+
         setCurrentPaymentReminder(nextPayment);
         setPaymentKey(prev => prev + 1); // Force re-render to get new meme
         setShowPaymentReminder(true);
       } else {
         // If no upcoming payments, show a message
-        alert("No upcoming payments due!");
+        toast.info("No upcoming payments due!", {
+          description: "All caught up! 🎉"
+        });
       }
     } else {
       // If no payment reminders, show a message
-      alert("No payment reminders set up yet!");
+      toast.info("No payment reminders yet", {
+        description: "Add some expenses to create payment reminders"
+      });
     }
+  };
+
+  // Calculate payment reminder summary
+  const paymentSummary = useMemo(() => {
+    if (!paymentReminders || paymentReminders.length === 0) {
+      return { total: 0, pending: 0, overdue: 0, completed: 0 };
+    }
+
+    const now = new Date();
+    return paymentReminders.reduce((acc, reminder) => {
+      acc.total++;
+      if (reminder.status === "pending") acc.pending++;
+      else if (reminder.status === "overdue") acc.overdue++;
+      else if (reminder.status === "completed") acc.completed++;
+      return acc;
+    }, { total: 0, pending: 0, overdue: 0, completed: 0 });
+  }, [paymentReminders]);
+
+  // Function to mark payment reminder as paid
+  const markPaymentAsPaid = (reminderId: string) => {
+    // In a real app, this would update the paymentReminders state
+    // For now, we'll just show a success message
+    toast.success("Payment marked as completed!");
+    setShowPaymentReminder(false);
   };
 
   return (
@@ -200,7 +247,7 @@ export const Dashboard = ({
             View Analytics
           </Button>
           
-          {/* Fun Payment Reminder Button */}
+          {/* Payment Reminder Button */}
           <Button
             onClick={() => {
               playClick();
@@ -211,9 +258,18 @@ export const Dashboard = ({
             onMouseEnter={() => playHover()}
           >
             <Bell className="w-6 h-6 mr-3" />
-            Payment Reminder
-            <span className="absolute top-2 right-2 w-3 h-3 bg-red-500 rounded-full animate-ping"></span>
-            <Zap className="w-5 h-5 ml-3 animate-pulse" />
+            <div className="text-left">
+              <div className="font-semibold">Payment Reminders</div>
+              <div className="text-sm opacity-80">
+                {paymentSummary.pending > 0 ? `${paymentSummary.pending} pending` : "All caught up"}
+              </div>
+            </div>
+            {paymentSummary.pending > 0 && (
+              <span className="absolute top-2 right-2 w-3 h-3 bg-red-500 rounded-full animate-ping"></span>
+            )}
+            {paymentSummary.overdue > 0 && (
+              <span className="absolute top-2 right-8 w-3 h-3 bg-orange-500 rounded-full animate-pulse"></span>
+            )}
           </Button>
         </div>
 
@@ -247,8 +303,9 @@ export const Dashboard = ({
         <Card className="glass-strong p-6 animate-slide-up border-primary/20 mb-8" style={{ animationDelay: '0.3s' }}>
           <h2 className="text-xl font-display mb-4 gradient-text">Recent Activity</h2>
           
-          <div className="space-y-3">
-            {recentActivity.map((activity, index) => (
+          {recentActivity.length > 0 ? (
+            <div className="space-y-3">
+              {recentActivity.map((activity, index) => (
               <div
                 key={index}
                 className="glass p-4 rounded-lg hover-scale cursor-pointer group transition-all hover:border-primary/40 border border-transparent"
@@ -276,7 +333,29 @@ export const Dashboard = ({
                 </div>
               </div>
             ))}
-          </div>
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
+                <Activity className="w-8 h-8 text-primary" />
+              </div>
+              <h4 className="text-lg font-semibold mb-2">No recent activity</h4>
+              <p className="text-muted-foreground mb-4">
+                Add some expenses to see your recent activity here.
+              </p>
+              <Button
+                onClick={() => {
+                  playClick();
+                  onAddExpense?.();
+                }}
+                className="glass-strong hover-scale"
+                onMouseEnter={() => playHover()}
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Add Your First Expense
+              </Button>
+            </div>
+          )}
         </Card>
 
       </div>
@@ -285,14 +364,15 @@ export const Dashboard = ({
       {showPaymentReminder && currentPaymentReminder && (
         <PaymentReminder
           key={paymentKey} // This forces a re-render with a new meme
+          id={currentPaymentReminder.id}
           debtorName={currentPaymentReminder.debtorName}
           creditorName={currentPaymentReminder.creditorName}
           amount={currentPaymentReminder.amount}
-          onPayNow={() => {
-            setShowPaymentReminder(false);
-            // In a real app, this would update the balance
-            alert("Payment successful! Balance updated.");
-          }}
+          dueDate={currentPaymentReminder.dueDate}
+          groupId={currentPaymentReminder.groupId}
+          expenseId={currentPaymentReminder.expenseId}
+          status={currentPaymentReminder.status}
+          onPayNow={() => markPaymentAsPaid(currentPaymentReminder.id)}
           onDismiss={() => setShowPaymentReminder(false)}
         />
       )}

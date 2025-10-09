@@ -1,14 +1,16 @@
 import { Button } from "@/components/ui/button";
-import { 
-  Home, 
-  BarChart3, 
-  Trophy, 
-  PieChart, 
-  Zap, 
-  Shield, 
-  Settings, 
+import {
+  Home,
+  BarChart3,
+  Trophy,
+  PieChart,
+  Zap,
+  Shield,
+  Settings,
   Users,
-  Menu
+  Menu,
+  FolderOpen,
+  Clock
 } from "lucide-react";
 import { useState } from "react";
 import { useSound } from "@/hooks/useSound";
@@ -22,9 +24,11 @@ interface NavigationMenuProps {
   onViewAdvancedGamification: () => void;
   onViewSecurityPrivacy: () => void;
   onViewAccessibilityImprovements: () => void;
+  onViewExpenseGroups: () => void;
+  onViewPaymentReminders: () => void;
 }
 
-export const NavigationMenu = ({ 
+export const NavigationMenu = ({
   onViewDashboard,
   onViewAnalytics,
   onViewGamification,
@@ -32,7 +36,9 @@ export const NavigationMenu = ({
   onViewEnhancedUI,
   onViewAdvancedGamification,
   onViewSecurityPrivacy,
-  onViewAccessibilityImprovements
+  onViewAccessibilityImprovements,
+  onViewExpenseGroups,
+  onViewPaymentReminders
 }: NavigationMenuProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const { playClick, playHover } = useSound();
@@ -45,7 +51,9 @@ export const NavigationMenu = ({
     { name: "Enhanced UI", icon: <Zap className="w-4 h-4" />, action: onViewEnhancedUI },
     { name: "Advanced Gamification", icon: <Trophy className="w-4 h-4" />, action: onViewAdvancedGamification },
     { name: "Security & Privacy", icon: <Shield className="w-4 h-4" />, action: onViewSecurityPrivacy },
-    { name: "Accessibility", icon: <Users className="w-4 h-4" />, action: onViewAccessibilityImprovements }
+    { name: "Accessibility", icon: <Users className="w-4 h-4" />, action: onViewAccessibilityImprovements },
+    { name: "Groups", icon: <FolderOpen className="w-4 h-4" />, action: onViewExpenseGroups },
+    { name: "Reminders", icon: <Clock className="w-4 h-4" />, action: onViewPaymentReminders }
   ];
 
   return (
