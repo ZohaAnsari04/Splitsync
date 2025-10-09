@@ -212,7 +212,7 @@ export const Settlement = ({ onBack }: { onBack: () => void }) => {
           <Button 
             variant={activeTab === "requests" ? "default" : "outline"} 
             onClick={() => setActiveTab("requests")}
-            className={activeTab === "requests" ? "glass-strong" : "glass"}
+            className={activeTab === "requests" ? "glass-strong text-foreground" : "glass"}
           >
             <Bell className="w-4 h-4 mr-2" />
             Payment Requests
@@ -220,7 +220,7 @@ export const Settlement = ({ onBack }: { onBack: () => void }) => {
           <Button 
             variant={activeTab === "history" ? "default" : "outline"} 
             onClick={() => setActiveTab("history")}
-            className={activeTab === "history" ? "glass-strong" : "glass"}
+            className={activeTab === "history" ? "glass-strong text-foreground" : "glass"}
           >
             <History className="w-4 h-4 mr-2" />
             Settlement History

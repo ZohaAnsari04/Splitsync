@@ -40,7 +40,7 @@ export const FriendsList = () => {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-display gradient-text">Friends</h2>
-        <Button size="sm" className="glass-strong hover-scale">
+        <Button size="sm" className="glass-strong hover-scale text-foreground">
           <UserPlus className="w-4 h-4 mr-2" />
           Add Friend
         </Button>

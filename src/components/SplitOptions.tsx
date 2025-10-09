@@ -304,7 +304,7 @@ export const SplitOptions = ({ totalAmount, participants }: SplitOptionsProps) =
             <p className="text-sm text-muted-foreground mb-3">
               Create templates for regular expenses like rent, subscriptions, etc.
             </p>
-            <Button className="w-full glass-strong hover-scale" onClick={() => playClick()} onMouseEnter={() => playHover()}>
+            <Button className="glass-strong hover-scale text-foreground" onClick={() => playClick()} onMouseEnter={() => playHover()}>
               Create Recurring Template
             </Button>
           </div>
