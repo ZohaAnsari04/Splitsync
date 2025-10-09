@@ -41,6 +41,13 @@ interface Expense {
   date: Date;
 }
 
+// Define the streak type
+interface Streak {
+  current: number;
+  longest: number;
+  lastLogged: string;
+}
+
 const Index = () => {
   const [currentView, setCurrentView] = useState<View>("splash");
   const [showAddExpense, setShowAddExpense] = useState(false);
@@ -65,6 +72,13 @@ const Index = () => {
   // Sample expenses data
   const [expenses, setExpenses] = useState<Expense[]>([]);
   
+  // Streak data
+  const [streak, setStreak] = useState<Streak>({
+    current: 15,
+    longest: 28,
+    lastLogged: new Date().toISOString().split('T')[0]
+  });
+  
   // Add a new expense to recent activity
   const addExpenseToActivity = (name: string, amount: number, split: number) => {
     const newActivity: RecentActivity = {
@@ -88,6 +102,9 @@ const Index = () => {
     
     setExpenses(prev => [...prev, newExpense]);
     
+    // Update streak when expense is added
+    updateStreak();
+    
     // Update balances based on the new expense
     updateBalances(newExpense);
     
@@ -99,6 +116,47 @@ const Index = () => {
     
     // Play notification sound
     playNotification();
+  };
+
+  // Function to update streak when an expense is added
+  const updateStreak = () => {
+    const today = new Date().toISOString().split('T')[0];
+    const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+    
+    // If last logged was yesterday or today, increment current streak
+    if (streak.lastLogged === yesterday || streak.lastLogged === today) {
+      const newCurrentStreak = streak.lastLogged === today ? streak.current : streak.current + 1;
+      const newLongestStreak = Math.max(newCurrentStreak, streak.longest);
+      
+      const updatedStreak = {
+        current: newCurrentStreak,
+        longest: newLongestStreak,
+        lastLogged: today
+      };
+      
+      setStreak(updatedStreak);
+      
+      // Show streak notification if it's a new day
+      if (streak.lastLogged !== today) {
+        toast.success(`Streak maintained! ${newCurrentStreak} days in a row! 🔥`, {
+          description: `Your longest streak is ${newLongestStreak} days`,
+          duration: 5000,
+        });
+      }
+    } else if (streak.lastLogged !== today) {
+      // If last logged was not today or yesterday, reset streak to 1
+      const updatedStreak = {
+        current: 1,
+        longest: streak.longest,
+        lastLogged: today
+      };
+      
+      setStreak(updatedStreak);
+      
+      toast.info("New streak started! Add expenses daily to build your streak. 🔥", {
+        duration: 5000,
+      });
+    }
   };
 
   // Function to update balances when a new expense is added
@@ -137,7 +195,7 @@ const Index = () => {
       case "enhanced-ui":
         return <EnhancedUI onBack={() => setCurrentView("dashboard")} />;
       case "advanced-gamification":
-        return <AdvancedGamification onBack={() => setCurrentView("dashboard")} />;
+        return <AdvancedGamification onBack={() => setCurrentView("dashboard")} streak={streak} />;
       case "security-privacy":
         return <SecurityPrivacy onBack={() => setCurrentView("dashboard")} />;
       case "accessibility-improvements":

@@ -16,6 +16,7 @@ import {
 import { useState } from "react";
 import { useSound } from "@/hooks/useSound";
 
+// Define the streak type
 interface Streak {
   current: number;
   longest: number;
@@ -50,12 +51,12 @@ interface Competition {
   prize: string;
 }
 
-export const AdvancedGamification = ({ onBack }: { onBack: () => void }) => {
+export const AdvancedGamification = ({ onBack, streak: propStreak }: { onBack: () => void; streak?: Streak }) => {
   const [activeTab, setActiveTab] = useState<"streaks" | "badges" | "challenges" | "competitions">("streaks");
   const { playClick, playHover } = useSound();
   
-  // Streak data
-  const streak: Streak = {
+  // Streak data - use propStreak if provided, otherwise use default
+  const streak: Streak = propStreak || {
     current: 15,
     longest: 28,
     lastLogged: "2024-06-15"
