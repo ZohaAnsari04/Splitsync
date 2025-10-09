@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { useSound } from "@/hooks/useSound";
+import { toast } from "sonner";
 
 // Define the streak type
 interface Streak {
@@ -40,19 +41,11 @@ interface Challenge {
   progress: number;
   endDate: string;
   reward: string;
-}
-
-interface Competition {
-  id: string;
-  name: string;
-  participants: { name: string; score: number }[];
-  startDate: string;
-  endDate: string;
-  prize: string;
+  joined?: boolean; // Add joined property
 }
 
 export const AdvancedGamification = ({ onBack, streak: propStreak }: { onBack: () => void; streak?: Streak }) => {
-  const [activeTab, setActiveTab] = useState<"streaks" | "badges" | "challenges" | "competitions">("streaks");
+  const [activeTab, setActiveTab] = useState<"streaks" | "badges" | "challenges">("streaks");
   const { playClick, playHover } = useSound();
   
   // Streak data - use propStreak if provided, otherwise use default
@@ -111,8 +104,8 @@ export const AdvancedGamification = ({ onBack, streak: propStreak }: { onBack: (
     }
   ];
 
-  // Challenges data
-  const challenges: Challenge[] = [
+  // Challenges data with joined state
+  const [challenges, setChallenges] = useState<Challenge[]>([
     {
       id: "1",
       name: "Weekly Warrior",
@@ -120,7 +113,8 @@ export const AdvancedGamification = ({ onBack, streak: propStreak }: { onBack: (
       participants: 142,
       progress: 75,
       endDate: "2024-06-22",
-      reward: "500 Karma Points"
+      reward: "500 Karma Points",
+      joined: false
     },
     {
       id: "2",
@@ -129,7 +123,8 @@ export const AdvancedGamification = ({ onBack, streak: propStreak }: { onBack: (
       participants: 89,
       progress: 40,
       endDate: "2024-06-30",
-      reward: "1000 Karma Points"
+      reward: "1000 Karma Points",
+      joined: false
     },
     {
       id: "3",
@@ -138,39 +133,29 @@ export const AdvancedGamification = ({ onBack, streak: propStreak }: { onBack: (
       participants: 203,
       progress: 20,
       endDate: "2024-06-25",
-      reward: "300 Karma Points"
+      reward: "300 Karma Points",
+      joined: false
     }
-  ];
+  ]);
 
-  // Competitions data
-  const competitions: Competition[] = [
-    {
-      id: "1",
-      name: "Monthly Spending Challenge",
-      participants: [
-        { name: "You", score: 15400 },
-        { name: "Alice Johnson", score: 14200 },
-        { name: "Bob Smith", score: 13800 },
-        { name: "Charlie Brown", score: 12900 }
-      ],
-      startDate: "2024-06-01",
-      endDate: "2024-06-30",
-      prize: "₹5000 Cash Prize"
-    },
-    {
-      id: "2",
-      name: "Savings Sprint",
-      participants: [
-        { name: "Diana Prince", score: 8200 },
-        { name: "You", score: 7500 },
-        { name: "Eve Wilson", score: 6900 },
-        { name: "Frank Miller", score: 6400 }
-      ],
-      startDate: "2024-06-10",
-      endDate: "2024-07-10",
-      prize: "3 Months Premium Subscription"
-    }
-  ];
+  // Function to handle joining a challenge
+  const handleJoinChallenge = (challengeId: string) => {
+    setChallenges(prevChallenges => 
+      prevChallenges.map(challenge => {
+        if (challenge.id === challengeId) {
+          // If already joined, show a message, otherwise join the challenge
+          if (challenge.joined) {
+            toast.info(`You are already participating in "${challenge.name}"`);
+            return challenge;
+          } else {
+            toast.success(`You've joined the "${challenge.name}" challenge!`);
+            return { ...challenge, joined: true, participants: challenge.participants + 1 };
+          }
+        }
+        return challenge;
+      })
+    );
+  };
 
   return (
     <div className="min-h-screen relative overflow-hidden p-6">
@@ -197,43 +182,43 @@ export const AdvancedGamification = ({ onBack, streak: propStreak }: { onBack: (
         {/* Stats Overview */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
           <Card 
-            className="glass p-4 text-center hover-scale cursor-pointer"
+            className="glass p-4 text-center hover-scale cursor-pointer border border-primary/30"
             onClick={() => playClick()}
             onMouseEnter={() => playHover()}
           >
             <Flame className="w-8 h-8 text-orange-500 mx-auto mb-2" />
             <div className="text-2xl font-display font-bold gradient-text">{streak.current}</div>
-            <div className="text-sm text-muted-foreground">Day Streak</div>
+            <div className="text-sm text-foreground">Day Streak</div>
           </Card>
           
           <Card 
-            className="glass p-4 text-center hover-scale cursor-pointer"
+            className="glass p-4 text-center hover-scale cursor-pointer border border-primary/30"
             onClick={() => playClick()}
             onMouseEnter={() => playHover()}
           >
             <Trophy className="w-8 h-8 text-yellow-500 mx-auto mb-2" />
             <div className="text-2xl font-display font-bold gradient-text">{badges.filter(b => b.earned).length}</div>
-            <div className="text-sm text-muted-foreground">Badges Earned</div>
+            <div className="text-sm text-foreground">Badges Earned</div>
           </Card>
           
           <Card 
-            className="glass p-4 text-center hover-scale cursor-pointer"
+            className="glass p-4 text-center hover-scale cursor-pointer border border-primary/30"
             onClick={() => playClick()}
             onMouseEnter={() => playHover()}
           >
             <Target className="w-8 h-8 text-green-500 mx-auto mb-2" />
             <div className="text-2xl font-display font-bold gradient-text">{challenges.length}</div>
-            <div className="text-sm text-muted-foreground">Active Challenges</div>
+            <div className="text-sm text-foreground">Active Challenges</div>
           </Card>
           
           <Card 
-            className="glass p-4 text-center hover-scale cursor-pointer"
+            className="glass p-4 text-center hover-scale cursor-pointer border border-primary/30"
             onClick={() => playClick()}
             onMouseEnter={() => playHover()}
           >
             <Crown className="w-8 h-8 text-purple-500 mx-auto mb-2" />
             <div className="text-2xl font-display font-bold gradient-text">2nd</div>
-            <div className="text-sm text-muted-foreground">Global Rank</div>
+            <div className="text-sm text-foreground">Global Rank</div>
           </Card>
         </div>
 
@@ -245,7 +230,7 @@ export const AdvancedGamification = ({ onBack, streak: propStreak }: { onBack: (
               playClick();
               setActiveTab("streaks");
             }}
-            className={activeTab === "streaks" ? "glass-strong" : "glass"}
+            className={`${activeTab === "streaks" ? "glass-strong" : "glass"} text-foreground border border-primary/30 hover:border-primary/60`}
             onMouseEnter={() => playHover()}
           >
             <Flame className="w-4 h-4 mr-2" />
@@ -257,7 +242,7 @@ export const AdvancedGamification = ({ onBack, streak: propStreak }: { onBack: (
               playClick();
               setActiveTab("badges");
             }}
-            className={activeTab === "badges" ? "glass-strong" : "glass"}
+            className={`${activeTab === "badges" ? "glass-strong" : "glass"} text-foreground border border-primary/30 hover:border-primary/60`}
             onMouseEnter={() => playHover()}
           >
             <Award className="w-4 h-4 mr-2" />
@@ -269,23 +254,11 @@ export const AdvancedGamification = ({ onBack, streak: propStreak }: { onBack: (
               playClick();
               setActiveTab("challenges");
             }}
-            className={activeTab === "challenges" ? "glass-strong" : "glass"}
+            className={`${activeTab === "challenges" ? "glass-strong" : "glass"} text-foreground border border-primary/30 hover:border-primary/60`}
             onMouseEnter={() => playHover()}
           >
             <Target className="w-4 h-4 mr-2" />
             Social Challenges
-          </Button>
-          <Button 
-            variant={activeTab === "competitions" ? "default" : "outline"} 
-            onClick={() => {
-              playClick();
-              setActiveTab("competitions");
-            }}
-            className={activeTab === "competitions" ? "glass-strong" : "glass"}
-            onMouseEnter={() => playHover()}
-          >
-            <Users className="w-4 h-4 mr-2" />
-            Group Competitions
           </Button>
         </div>
 
@@ -299,43 +272,43 @@ export const AdvancedGamification = ({ onBack, streak: propStreak }: { onBack: (
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div 
-                className="text-center p-6 glass rounded cursor-pointer hover-scale"
+                className="text-center p-6 glass rounded cursor-pointer hover-scale border border-primary/20"
                 onClick={() => playClick()}
                 onMouseEnter={() => playHover()}
               >
                 <div className="text-4xl font-display font-bold gradient-text mb-2">{streak.current}</div>
                 <div className="text-muted-foreground mb-4">Current Streak</div>
-                <div className="text-sm">
+                <div className="text-sm text-foreground">
                   Last logged: {new Date(streak.lastLogged).toLocaleDateString()}
                 </div>
               </div>
               
               <div 
-                className="text-center p-6 glass rounded cursor-pointer hover-scale"
+                className="text-center p-6 glass rounded cursor-pointer hover-scale border border-primary/20"
                 onClick={() => playClick()}
                 onMouseEnter={() => playHover()}
               >
                 <div className="text-4xl font-display font-bold gradient-text mb-2">{streak.longest}</div>
                 <div className="text-muted-foreground mb-4">Longest Streak</div>
-                <div className="text-sm">
+                <div className="text-sm text-foreground">
                   Personal best record
                 </div>
               </div>
               
-              <div className="p-6 glass rounded">
-                <h3 className="font-semibold mb-3">Streak Benefits</h3>
+              <div className="p-6 glass rounded border border-primary/20">
+                <h3 className="font-semibold mb-3 text-foreground">Streak Benefits</h3>
                 <ul className="space-y-2 text-sm">
-                  <li className="flex items-center gap-2">
+                  <li className="flex items-center gap-2 text-foreground">
                     <Zap className="w-4 h-4 text-yellow-500" />
-                    +10% Karma bonus
+                    <span>+10% Karma bonus</span>
                   </li>
-                  <li className="flex items-center gap-2">
+                  <li className="flex items-center gap-2 text-foreground">
                     <Trophy className="w-4 h-4 text-yellow-500" />
-                    Exclusive badges
+                    <span>Exclusive badges</span>
                   </li>
-                  <li className="flex items-center gap-2">
+                  <li className="flex items-center gap-2 text-foreground">
                     <Star className="w-4 h-4 text-yellow-500" />
-                    Early access to features
+                    <span>Early access to features</span>
                   </li>
                 </ul>
               </div>
@@ -343,7 +316,7 @@ export const AdvancedGamification = ({ onBack, streak: propStreak }: { onBack: (
             
             <div className="mt-6 pt-6 border-t border-border">
               <Button 
-                className="glass-strong hover-scale"
+                className="glass-strong hover-scale text-foreground border border-primary/30 hover:border-primary/60"
                 onClick={() => playClick()}
                 onMouseEnter={() => playHover()}
               >
@@ -447,107 +420,20 @@ export const AdvancedGamification = ({ onBack, streak: propStreak }: { onBack: (
                     
                     <Button 
                       size="sm" 
-                      className="glass-strong hover-scale"
+                      className={`hover-scale text-foreground border border-primary/30 hover:border-primary/60 ${
+                        challenge.joined ? "glass" : "glass-strong"
+                      }`}
                       onClick={(e) => {
                         e.stopPropagation();
                         playClick();
+                        // Implement join challenge functionality
+                        handleJoinChallenge(challenge.id);
                       }}
                       onMouseEnter={() => playHover()}
                     >
-                      Join
+                      {challenge.joined ? "Joined" : "Join"}
                     </Button>
                   </div>
-                </div>
-              </Card>
-            ))}
-          </div>
-        )}
-
-        {/* Group Competitions */}
-        {activeTab === "competitions" && (
-          <div className="space-y-6">
-            {competitions.map((competition) => (
-              <Card 
-                key={competition.id} 
-                className="glass-strong p-6 hover-scale cursor-pointer"
-                onClick={() => playClick()}
-                onMouseEnter={() => playHover()}
-              >
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-2">
-                    <Users className="w-5 h-5 text-primary" />
-                    <h3 className="text-xl font-display gradient-text">{competition.name}</h3>
-                  </div>
-                  <Badge className="bg-purple-500/20 text-purple-500">
-                    {competition.prize}
-                  </Badge>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-                  <div>
-                    <div className="text-sm text-muted-foreground mb-2">Duration</div>
-                    <div>
-                      {new Date(competition.startDate).toLocaleDateString()} - {new Date(competition.endDate).toLocaleDateString()}
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <div className="text-sm text-muted-foreground mb-2">Participants</div>
-                    <div className="flex -space-x-2">
-                      {competition.participants.slice(0, 4).map((participant, index) => (
-                        <div 
-                          key={index} 
-                          className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-xs font-display cursor-pointer hover-scale"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            playClick();
-                          }}
-                          onMouseEnter={() => playHover()}
-                        >
-                          {participant.name[0]}
-                        </div>
-                      ))}
-                      {competition.participants.length > 4 && (
-                        <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-xs">
-                          +{competition.participants.length - 4}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="space-y-3">
-                  {competition.participants
-                    .sort((a, b) => b.score - a.score)
-                    .map((participant, index) => (
-                      <div 
-                        key={index} 
-                        className={`flex items-center justify-between p-3 rounded ${
-                          participant.name === "You" 
-                            ? "bg-primary/10 border border-primary/30" 
-                            : "glass"
-                        } cursor-pointer hover-scale`}
-                        onClick={() => playClick()}
-                        onMouseEnter={() => playHover()}
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className={`w-8 h-8 rounded-full flex items-center justify-center font-display ${
-                            index === 0 ? "bg-yellow-500/20 text-yellow-500" :
-                            index === 1 ? "bg-gray-500/20 text-gray-500" :
-                            index === 2 ? "bg-amber-800/20 text-amber-800" :
-                            "bg-secondary/20 text-secondary"
-                          }`}>
-                            {index + 1}
-                          </div>
-                          <span className={participant.name === "You" ? "font-bold" : ""}>
-                            {participant.name}
-                          </span>
-                        </div>
-                        <div className="font-mono font-bold gradient-text">
-                          ₹{participant.score.toLocaleString()}
-                        </div>
-                      </div>
-                    ))}
                 </div>
               </Card>
             ))}
