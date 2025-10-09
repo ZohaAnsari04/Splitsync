@@ -224,7 +224,7 @@ export const IntegrationCapabilities = ({ onBack }: { onBack: () => void }) => {
               <Button 
                 onClick={handleManualSync}
                 disabled={syncing}
-                className="glass-strong hover-scale"
+                className="glass-strong hover-scale text-foreground"
               >
                 {syncing ? (
                   <>
@@ -270,7 +270,7 @@ export const IntegrationCapabilities = ({ onBack }: { onBack: () => void }) => {
             </div>
             
             <div className="mt-6 pt-6 border-t border-border">
-              <Button className="glass-strong hover-scale">
+              <Button className="glass-strong hover-scale text-foreground">
                 <CreditCard className="w-4 h-4 mr-2" />
                 Connect New Account
               </Button>
@@ -300,7 +300,7 @@ export const IntegrationCapabilities = ({ onBack }: { onBack: () => void }) => {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="font-semibold">Recurring Expenses</h3>
-                <Button size="sm" className="glass-strong hover-scale">
+                <Button size="sm" className="glass-strong hover-scale text-foreground">
                   <Clock className="w-4 h-4 mr-2" />
                   Add Recurring Expense
                 </Button>

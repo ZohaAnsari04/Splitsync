@@ -260,7 +260,7 @@ export const Settlement = ({ onBack }: { onBack: () => void }) => {
                       <div className="flex gap-2">
                         {request.from === "You" ? (
                           <>
-                            <Button size="sm" className="glass-strong hover-scale">
+                            <Button size="sm" className="glass-strong hover-scale text-foreground">
                               Pay Now
                             </Button>
                             <Button size="sm" variant="outline" className="glass">
@@ -269,7 +269,7 @@ export const Settlement = ({ onBack }: { onBack: () => void }) => {
                           </>
                         ) : (
                           <>
-                            <Button size="sm" className="glass-strong hover-scale">
+                            <Button size="sm" className="glass-strong hover-scale text-foreground">
                               Request Payment
                             </Button>
                             <Button size="sm" variant="outline" className="glass">

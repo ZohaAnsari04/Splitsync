@@ -206,7 +206,7 @@ export const GroupDetails = ({ group, expenses, onBack, onAddExpense, onExpenseA
             <img src={logo} alt="SplitSync" className="w-10 h-10" />
             <div>
               <h1 className="text-2xl font-display gradient-text">{group.name}</h1>
-              <p className="text-muted-foreground">{group.participants.length} members</p>
+              <p className="text-foreground/80">{group.participants.length} members</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -234,8 +234,8 @@ export const GroupDetails = ({ group, expenses, onBack, onAddExpense, onExpenseA
                 <DollarSign className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h3 className="font-display text-lg">Total Spent</h3>
-                <p className="text-sm text-muted-foreground">In this group</p>
+                <h3 className="font-display text-lg text-foreground">Total Spent</h3>
+                <p className="text-sm text-foreground/80">In this group</p>
               </div>
             </div>
             <p className="text-3xl font-bold gradient-text mb-2">
@@ -253,8 +253,8 @@ export const GroupDetails = ({ group, expenses, onBack, onAddExpense, onExpenseA
                 <Clock className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h3 className="font-display text-lg">Pending Payments</h3>
-                <p className="text-sm text-muted-foreground">Awaiting settlement</p>
+                <h3 className="font-display text-lg text-foreground">Pending Payments</h3>
+                <p className="text-sm text-foreground/80">Awaiting settlement</p>
               </div>
             </div>
             <p className="text-3xl font-bold gradient-text mb-2">
@@ -272,8 +272,8 @@ export const GroupDetails = ({ group, expenses, onBack, onAddExpense, onExpenseA
                 <Trophy className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h3 className="font-display text-lg">Leaderboard</h3>
-                <p className="text-sm text-muted-foreground">Group rankings</p>
+                <h3 className="font-display text-lg text-foreground">Leaderboard</h3>
+                <p className="text-sm text-foreground/80">Group rankings</p>
               </div>
             </div>
             <p className="text-3xl font-bold gradient-text mb-2">
@@ -310,13 +310,13 @@ export const GroupDetails = ({ group, expenses, onBack, onAddExpense, onExpenseA
                           </AvatarFallback>
                         </Avatar>
                         <div>
-                          <p className="font-semibold">{payment.from}</p>
-                          <p className="text-sm text-muted-foreground">owes</p>
+                          <p className="font-semibold text-foreground">{payment.from}</p>
+                          <p className="text-sm text-foreground/80">owes</p>
                         </div>
                       </div>
                       <div className="text-right">
                         <p className="font-bold gradient-text">{formatCurrency(payment.amount)}</p>
-                        <p className="text-sm text-muted-foreground">to You</p>
+                        <p className="text-sm text-foreground/80">to You</p>
                       </div>
                     </div>
                   </div>
@@ -324,9 +324,9 @@ export const GroupDetails = ({ group, expenses, onBack, onAddExpense, onExpenseA
               </div>
             ) : (
               <div className="text-center py-8">
-                <Calculator className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
-                <h4 className="text-lg font-semibold mb-2">No pending payments</h4>
-                <p className="text-muted-foreground mb-4">
+                <Calculator className="w-16 h-16 mx-auto mb-4 text-foreground/30" />
+                <h4 className="text-lg font-semibold mb-2 text-foreground">No pending payments</h4>
+                <p className="text-foreground/80 mb-4">
                   Add some expenses to see who owes whom and settle payments easily.
                 </p>
                 <Button
@@ -338,7 +338,7 @@ export const GroupDetails = ({ group, expenses, onBack, onAddExpense, onExpenseA
                   onMouseEnter={() => playHover()}
                 >
                   <Plus className="w-4 h-4 mr-2" />
-                  Add First Expense
+                  <span className="text-foreground">Add First Expense</span>
                 </Button>
               </div>
             )}
@@ -371,8 +371,8 @@ export const GroupDetails = ({ group, expenses, onBack, onAddExpense, onExpenseA
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1">
-                      <p className="font-semibold">{member.name}</p>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="font-semibold text-foreground">{member.name}</p>
+                      <p className="text-sm text-foreground/80">
                         Paid: {formatCurrency(member.paid)} • Owed: {formatCurrency(member.owed)}
                       </p>
                     </div>
@@ -391,10 +391,10 @@ export const GroupDetails = ({ group, expenses, onBack, onAddExpense, onExpenseA
 
         {/* Recent Activity */}
         <Card className="glass-strong p-6 animate-slide-up border-accent/20" style={{ animationDelay: '0.5s' }}>
-          <h3 className="font-display text-xl mb-4 flex items-center gap-2">
+          <div className="flex items-center gap-3 mb-4">
             <Activity className="w-5 h-5 text-accent" />
-            Recent Activity
-          </h3>
+            <h3 className="font-display text-xl text-foreground">Recent Activity</h3>
+          </div>
 
           {groupExpenses.length > 0 ? (
             <div className="space-y-3">

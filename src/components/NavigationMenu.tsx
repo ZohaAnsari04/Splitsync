@@ -63,7 +63,7 @@ export const NavigationMenu = ({
           playClick();
           setIsOpen(!isOpen);
         }}
-        className="glass-strong hover-scale mb-2 mx-auto block"
+        className="glass-strong hover-scale mb-2 mx-auto block text-foreground"
         size="icon"
         onMouseEnter={() => playHover()}
       >
@@ -81,7 +81,7 @@ export const NavigationMenu = ({
                 setIsOpen(false);
               }}
               variant="ghost"
-              className="flex flex-col items-center justify-center h-16 hover-scale"
+              className="flex flex-col items-center justify-center h-16 hover-scale text-foreground"
               onMouseEnter={() => playHover()}
             >
               <div className="mb-1">{item.icon}</div>

@@ -355,7 +355,7 @@ export const Dashboard = ({
                   playClick();
                   onAddExpense?.();
                 }}
-                className="glass-strong hover-scale"
+                className="glass-strong hover-scale text-foreground"
                 onMouseEnter={() => playHover()}
               >
                 <Plus className="w-4 h-4 mr-2" />

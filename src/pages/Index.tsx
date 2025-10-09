@@ -292,7 +292,7 @@ const Index = () => {
     
     // Show notification
     toast.success(`New expense added: ${name} - ₹${amount.toLocaleString()}`, {
-      description: `Split among ${split} people`,
+      description: `Split among ${participants.length} people`,
       duration: 5000,
     });
     
