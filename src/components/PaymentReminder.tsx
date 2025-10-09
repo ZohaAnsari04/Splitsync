@@ -434,7 +434,10 @@ export const PaymentReminder = ({
                   <Button 
                     variant="outline" 
                     className="glass hover-scale text-foreground"
-                    onClick={() => playClick()}
+                    onClick={() => {
+                      playClick();
+                      setShowPaymentScreen(false);
+                    }}
                   >
                     Pay Later
                   </Button>

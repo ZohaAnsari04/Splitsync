@@ -54,36 +54,17 @@ interface Forecast {
 export const FinancialInsights = ({ onBack }: { onBack: () => void }) => {
   const { playClick, playHover } = useSound();
   
-  // State for budgets
-  const [budgets, setBudgets] = useState<Budget[]>([
-    { id: "1", category: "Food & Dining", allocated: 5000, spent: 4200, color: "bg-red-500" },
-    { id: "2", category: "Transportation", allocated: 3000, spent: 2800, color: "bg-blue-500" },
-    { id: "3", category: "Entertainment", allocated: 2000, spent: 2500, color: "bg-purple-500" },
-    { id: "4", category: "Utilities", allocated: 4000, spent: 3800, color: "bg-green-500" },
-  ]);
-  
-  // State for savings goals
-  const [savingsGoals, setSavingsGoals] = useState<SavingsGoal[]>([
-    { id: "1", name: "Vacation Fund", target: 50000, current: 35000, deadline: "2024-12-31" },
-    { id: "2", name: "Emergency Fund", target: 100000, current: 75000, deadline: "2025-06-30" },
-    { id: "3", name: "New Laptop", target: 80000, current: 20000, deadline: "2024-11-15" },
-  ]);
-  
-  // State for adding new budget
-  const [showAddBudgetForm, setShowAddBudgetForm] = useState(false);
-  const [newBudgetCategory, setNewBudgetCategory] = useState("");
-  const [newBudgetAmount, setNewBudgetAmount] = useState("");
-  
-  // State for adding new goal
-  const [showAddGoalForm, setShowAddGoalForm] = useState(false);
-  const [newGoalName, setNewGoalName] = useState("");
-  const [newGoalTarget, setNewGoalTarget] = useState("");
-  const [newGoalDeadline, setNewGoalDeadline] = useState("");
-  
-  // Calculated totals
-  const [totalBudget, setTotalBudget] = useState(0);
-  const [totalSpent, setTotalSpent] = useState(0);
-  const [budgetPercentage, setBudgetPercentage] = useState(0);
+  // Colors for budget categories
+  const budgetColors = [
+    "bg-red-500",
+    "bg-blue-500",
+    "bg-purple-500",
+    "bg-green-500",
+    "bg-yellow-500",
+    "bg-pink-500",
+    "bg-indigo-500",
+    "bg-teal-500"
+  ];
 
   // Sample data for spending comparisons
   const spendingComparisons: SpendingComparison[] = [
@@ -111,17 +92,68 @@ export const FinancialInsights = ({ onBack }: { onBack: () => void }) => {
     { month: "Feb", predicted: 14200, previous: 13200 },
   ];
 
-  // Colors for budget categories
-  const budgetColors = [
-    "bg-red-500",
-    "bg-blue-500",
-    "bg-purple-500",
-    "bg-green-500",
-    "bg-yellow-500",
-    "bg-pink-500",
-    "bg-indigo-500",
-    "bg-teal-500"
-  ];
+  // State for budgets with localStorage persistence
+  const [budgets, setBudgets] = useState<Budget[]>(() => {
+    const savedBudgets = localStorage.getItem('financialInsightsBudgets');
+    if (savedBudgets) {
+      try {
+        return JSON.parse(savedBudgets);
+      } catch (e) {
+        console.error('Failed to parse budgets from localStorage', e);
+      }
+    }
+    // Default sample data
+    return [
+      { id: "1", category: "Food & Dining", allocated: 5000, spent: 4200, color: "bg-red-500" },
+      { id: "2", category: "Transportation", allocated: 3000, spent: 2800, color: "bg-blue-500" },
+      { id: "3", category: "Entertainment", allocated: 2000, spent: 2500, color: "bg-purple-500" },
+      { id: "4", category: "Utilities", allocated: 4000, spent: 3800, color: "bg-green-500" },
+    ];
+  });
+  
+  // State for savings goals with localStorage persistence
+  const [savingsGoals, setSavingsGoals] = useState<SavingsGoal[]>(() => {
+    const savedGoals = localStorage.getItem('financialInsightsSavingsGoals');
+    if (savedGoals) {
+      try {
+        return JSON.parse(savedGoals);
+      } catch (e) {
+        console.error('Failed to parse savings goals from localStorage', e);
+      }
+    }
+    // Default sample data
+    return [
+      { id: "1", name: "Vacation Fund", target: 50000, current: 35000, deadline: "2024-12-31" },
+      { id: "2", name: "Emergency Fund", target: 100000, current: 75000, deadline: "2025-06-30" },
+      { id: "3", name: "New Laptop", target: 80000, current: 20000, deadline: "2024-11-15" },
+    ];
+  });
+  
+  // State for adding new budget
+  const [showAddBudgetForm, setShowAddBudgetForm] = useState(false);
+  const [newBudgetCategory, setNewBudgetCategory] = useState("");
+  const [newBudgetAmount, setNewBudgetAmount] = useState("");
+  
+  // State for adding new goal
+  const [showAddGoalForm, setShowAddGoalForm] = useState(false);
+  const [newGoalName, setNewGoalName] = useState("");
+  const [newGoalTarget, setNewGoalTarget] = useState("");
+  const [newGoalDeadline, setNewGoalDeadline] = useState("");
+  
+  // Calculated totals
+  const [totalBudget, setTotalBudget] = useState(0);
+  const [totalSpent, setTotalSpent] = useState(0);
+  const [budgetPercentage, setBudgetPercentage] = useState(0);
+
+  // Save budgets to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('financialInsightsBudgets', JSON.stringify(budgets));
+  }, [budgets]);
+
+  // Save savings goals to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('financialInsightsSavingsGoals', JSON.stringify(savingsGoals));
+  }, [savingsGoals]);
 
   // Calculate totals whenever budgets change
   useEffect(() => {
@@ -173,6 +205,18 @@ export const FinancialInsights = ({ onBack }: { onBack: () => void }) => {
       setShowAddGoalForm(false);
       playClick();
     }
+  };
+
+  // Remove a budget
+  const handleRemoveBudget = (id: string) => {
+    setBudgets(budgets.filter(budget => budget.id !== id));
+    playClick();
+  };
+
+  // Remove a savings goal
+  const handleRemoveGoal = (id: string) => {
+    setSavingsGoals(savingsGoals.filter(goal => goal.id !== id));
+    playClick();
   };
 
   return (
@@ -277,10 +321,22 @@ export const FinancialInsights = ({ onBack }: { onBack: () => void }) => {
               {budgets.map((budget) => {
                 const percentage = Math.min(100, Math.round((budget.spent / budget.allocated) * 100));
                 return (
-                  <div key={budget.id}>
+                  <div key={budget.id} className="relative">
                     <div className="flex justify-between text-sm mb-1">
-                      <span>{budget.category}</span>
-                      <span className="font-mono">₹{budget.spent.toLocaleString()} / ₹{budget.allocated.toLocaleString()}</span>
+                      <div className="flex items-center">
+                        <span>{budget.category}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono">₹{budget.spent.toLocaleString()} / ₹{budget.allocated.toLocaleString()}</span>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="p-1 h-auto"
+                          onClick={() => handleRemoveBudget(budget.id)}
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      </div>
                     </div>
                     <div className="w-full bg-secondary rounded-full h-2">
                       <div 
@@ -474,8 +530,23 @@ export const FinancialInsights = ({ onBack }: { onBack: () => void }) => {
                     onMouseEnter={() => playHover()}
                   >
                     <div className="flex justify-between mb-2">
-                      <span className="font-semibold">{goal.name}</span>
-                      <span className="font-mono">₹{goal.current.toLocaleString()} / ₹{goal.target.toLocaleString()}</span>
+                      <div className="flex items-center">
+                        <span className="font-semibold">{goal.name}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono">₹{goal.current.toLocaleString()} / ₹{goal.target.toLocaleString()}</span>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="p-1 h-auto"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleRemoveGoal(goal.id);
+                          }}
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      </div>
                     </div>
                     <div className="w-full bg-secondary rounded-full h-2 mb-2">
                       <div 

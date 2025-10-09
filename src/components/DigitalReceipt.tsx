@@ -46,23 +46,23 @@ export const DigitalReceipt = ({ receipt, onClose }: DigitalReceiptProps) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
       <Card className="glass-strong max-w-2xl w-full max-h-[90vh] overflow-y-auto relative border-2 border-primary/30">
-        {/* Close button */}
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => {
-            playClick();
-            onClose();
-          }}
-          className="absolute top-4 right-4 z-10 glass"
-          onMouseEnter={() => playHover()}
-        >
-          <X className="w-5 h-5" />
-        </Button>
-
         {/* Receipt header */}
-        <div className="p-6 border-b border-border">
-          <div className="flex items-center justify-between">
+        <div className="p-6 border-b border-border relative">
+          {/* Close button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => {
+              playClick();
+              onClose();
+            }}
+            className="absolute top-4 right-4 z-10 glass text-foreground"
+            onMouseEnter={() => playHover()}
+          >
+            <X className="w-5 h-5" />
+          </Button>
+          
+          <div className="flex items-start justify-between pr-12">
             <div>
               <h2 className="text-2xl font-display gradient-text">Digital Receipt</h2>
               <p className="text-muted-foreground">Expense details and payment information</p>
@@ -92,7 +92,7 @@ export const DigitalReceipt = ({ receipt, onClose }: DigitalReceiptProps) => {
               </div>
             </div>
             
-            <div className="grid grid-cols-2 gap-4 mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
               <div>
                 <p className="text-sm text-muted-foreground">Transaction ID</p>
                 <p className="font-mono">TXN-{receipt.id}-{Math.floor(Math.random() * 10000)}</p>
@@ -122,19 +122,19 @@ export const DigitalReceipt = ({ receipt, onClose }: DigitalReceiptProps) => {
           <div className="mb-8">
             <h4 className="text-lg font-semibold mb-4">Expense Breakdown</h4>
             <div className="space-y-3">
-              <div className="flex justify-between">
+              <div className="flex justify-between items-center">
                 <span>Subtotal</span>
                 <span>₹{receipt.amount.toLocaleString()}</span>
               </div>
-              <div className="flex justify-between">
+              <div className="flex justify-between items-center">
                 <span>Tax</span>
                 <span>₹{(receipt.amount * 0.05).toFixed(2)}</span>
               </div>
-              <div className="flex justify-between">
+              <div className="flex justify-between items-center">
                 <span>Service Fee</span>
                 <span>₹{(receipt.amount * 0.02).toFixed(2)}</span>
               </div>
-              <div className="border-t border-border pt-3 mt-3 flex justify-between font-bold">
+              <div className="border-t border-border pt-3 mt-3 flex justify-between font-bold items-center relative">
                 <span>Total</span>
                 <span className="gradient-text">₹{receipt.amount.toLocaleString()}</span>
               </div>
@@ -179,7 +179,7 @@ export const DigitalReceipt = ({ receipt, onClose }: DigitalReceiptProps) => {
         </div>
 
         {/* Action buttons */}
-        <div className="p-6 border-t border-border flex flex-wrap gap-3">
+        <div className="p-6 border-t border-border flex flex-wrap gap-3 relative">
           <Button
             onClick={handlePrint}
             className="flex-1 glass-strong hover-scale text-foreground"
@@ -191,7 +191,7 @@ export const DigitalReceipt = ({ receipt, onClose }: DigitalReceiptProps) => {
           <Button
             onClick={handleDownload}
             variant="outline"
-            className="flex-1 glass hover-scale"
+            className="flex-1 glass hover-scale text-foreground"
             onMouseEnter={() => playHover()}
           >
             <Download className="w-4 h-4 mr-2" />
@@ -200,7 +200,7 @@ export const DigitalReceipt = ({ receipt, onClose }: DigitalReceiptProps) => {
           <Button
             onClick={handleShare}
             variant="outline"
-            className="flex-1 glass hover-scale"
+            className="flex-1 glass hover-scale text-foreground"
             onMouseEnter={() => playHover()}
           >
             <Share2 className="w-4 h-4 mr-2" />
