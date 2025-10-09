@@ -5,7 +5,6 @@ import {
   Mic, 
   Eye,
   Keyboard,
-  Contrast,
   Volume2,
   Settings,
   CheckCircle,
@@ -23,7 +22,6 @@ interface AccessibilitySetting {
 }
 
 export const AccessibilityImprovements = ({ onBack }: { onBack: () => void }) => {
-  const [highContrast, setHighContrast] = useState(false);
   const [voiceCommands, setVoiceCommands] = useState(true);
   const [screenReader, setScreenReader] = useState(false);
   const [keyboardNav, setKeyboardNav] = useState(true);
@@ -46,13 +44,6 @@ export const AccessibilityImprovements = ({ onBack }: { onBack: () => void }) =>
       icon: <Volume2 className="w-5 h-5" />
     },
     {
-      id: "3",
-      name: "High Contrast Mode",
-      description: "Increase color contrast for better visibility",
-      enabled: highContrast,
-      icon: <Contrast className="w-5 h-5" />
-    },
-    {
       id: "4",
       name: "Keyboard Navigation",
       description: "Navigate using keyboard shortcuts",
@@ -70,9 +61,6 @@ export const AccessibilityImprovements = ({ onBack }: { onBack: () => void }) =>
         break;
       case "2":
         setScreenReader(!screenReader);
-        break;
-      case "3":
-        setHighContrast(!highContrast);
         break;
       case "4":
         setKeyboardNav(!keyboardNav);
@@ -103,7 +91,7 @@ export const AccessibilityImprovements = ({ onBack }: { onBack: () => void }) =>
         </div>
 
         {/* Accessibility Status */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           <Card 
             className="glass p-4 text-center hover-scale cursor-pointer"
             onClick={() => playClick()}
@@ -126,18 +114,6 @@ export const AccessibilityImprovements = ({ onBack }: { onBack: () => void }) =>
               {screenReader ? "Active" : "Inactive"}
             </div>
             <div className="text-sm text-muted-foreground">Screen Reader</div>
-          </Card>
-          
-          <Card 
-            className="glass p-4 text-center hover-scale cursor-pointer"
-            onClick={() => playClick()}
-            onMouseEnter={() => playHover()}
-          >
-            <Contrast className="w-8 h-8 text-accent mx-auto mb-2" />
-            <div className="text-lg font-display font-bold gradient-text">
-              {highContrast ? "Active" : "Inactive"}
-            </div>
-            <div className="text-sm text-muted-foreground">High Contrast</div>
           </Card>
           
           <Card 
@@ -216,7 +192,7 @@ export const AccessibilityImprovements = ({ onBack }: { onBack: () => void }) =>
                       playClick();
                       setVoiceCommands(!voiceCommands);
                     }}
-                    className={voiceCommands ? "glass-strong" : "glass"}
+                    className={`${voiceCommands ? "glass-strong" : "glass"} text-foreground border border-primary/30 hover:border-primary/60`}
                     onMouseEnter={() => playHover()}
                   >
                     {voiceCommands ? "Enabled" : "Disabled"}
@@ -228,7 +204,7 @@ export const AccessibilityImprovements = ({ onBack }: { onBack: () => void }) =>
         </Card>
 
         {/* Screen Reader Optimization */}
-        <Card className="glass-strong p-6 mb-8 hover-scale">
+        <Card className="glass-strong p-6 hover-scale">
           <div className="flex items-center gap-3 mb-4">
             <Volume2 className="w-8 h-8 text-secondary" />
             <h2 className="text-xl font-display gradient-text">Screen Reader Optimization</h2>
@@ -290,105 +266,6 @@ export const AccessibilityImprovements = ({ onBack }: { onBack: () => void }) =>
           </div>
         </Card>
 
-        {/* High Contrast Mode */}
-        <Card className="glass-strong p-6 mb-8 hover-scale">
-          <div className="flex items-center gap-3 mb-4">
-            <Contrast className="w-8 h-8 text-accent" />
-            <h2 className="text-xl font-display gradient-text">High Contrast Mode</h2>
-          </div>
-          <p className="text-muted-foreground mb-4">
-            Increase color contrast for better visibility for users with visual impairments.
-          </p>
-          
-          <div className="flex flex-col md:flex-row gap-6">
-            <div className="flex-1">
-              <h3 className="font-semibold mb-3">Preview</h3>
-              <div 
-                className={`rounded-lg p-6 ${highContrast ? "bg-foreground text-background" : "bg-secondary/20"} cursor-pointer hover-scale`}
-                onClick={() => playClick()}
-                onMouseEnter={() => playHover()}
-              >
-                <div className="font-display text-xl mb-2">Sample Interface</div>
-                <div className="mb-4">This is how the interface appears with current settings</div>
-                <div className="flex gap-2">
-                  <Button 
-                    variant={highContrast ? "secondary" : "default"} 
-                    className={highContrast ? "" : "glass"}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      playClick();
-                    }}
-                    onMouseEnter={() => playHover()}
-                  >
-                    Primary Button
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    className={highContrast ? "border-foreground text-foreground" : "glass"}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      playClick();
-                    }}
-                    onMouseEnter={() => playHover()}
-                  >
-                    Secondary Button
-                  </Button>
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex-1">
-              <h3 className="font-semibold mb-3">High Contrast Settings</h3>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between p-3 glass rounded">
-                  <div>
-                    <div className="font-semibold">High Contrast Mode</div>
-                    <div className="text-sm text-muted-foreground">Increase color contrast</div>
-                  </div>
-                  <Button 
-                    variant={highContrast ? "default" : "outline"}
-                    onClick={() => {
-                      playClick();
-                      setHighContrast(!highContrast);
-                    }}
-                    className={highContrast ? "glass-strong" : "glass"}
-                    onMouseEnter={() => playHover()}
-                  >
-                    {highContrast ? "Enabled" : "Disabled"}
-                  </Button>
-                </div>
-                
-                <div className="p-3 glass rounded">
-                  <div className="font-semibold mb-2">Contrast Level</div>
-                  <div className="flex gap-2">
-                    <Button 
-                      variant="outline" 
-                      className={`flex-1 ${!highContrast ? "glass-strong" : "glass"}`}
-                      onClick={() => {
-                        playClick();
-                        setHighContrast(false);
-                      }}
-                      onMouseEnter={() => playHover()}
-                    >
-                      Standard
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      className={`flex-1 ${highContrast ? "glass-strong" : "glass"}`}
-                      onClick={() => {
-                        playClick();
-                        setHighContrast(true);
-                      }}
-                      onMouseEnter={() => playHover()}
-                    >
-                      High
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </Card>
       </div>
     </div>
   );
