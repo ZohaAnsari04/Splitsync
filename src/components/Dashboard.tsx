@@ -10,6 +10,14 @@ import { useSound } from "@/hooks/useSound";
 import { BalanceSummary } from "./BalanceSummary";
 import { PaymentReminder } from "./PaymentReminder";
 
+// Define the payment reminder type
+interface PaymentReminder {
+  debtorName: string;
+  creditorName: string;
+  amount: number;
+  dueDate: Date;
+}
+
 interface DashboardProps {
   onAddExpense: () => void;
   onViewAnalytics: () => void;
@@ -31,6 +39,7 @@ interface DashboardProps {
     to: string;
     amount: number;
   }[];
+  paymentReminders?: PaymentReminder[];
 }
 
 export const Dashboard = ({ 
@@ -51,12 +60,16 @@ export const Dashboard = ({
     { id: 1, from: "You", to: "Alice", amount: 300 },
     { id: 2, from: "Bob", to: "You", amount: 150 },
     { id: 3, from: "Alice", to: "Bob", amount: 75 },
+  ],
+  paymentReminders = [
+    { debtorName: "You", creditorName: "Alice", amount: 300, dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) },
   ]
 }: DashboardProps) => {
   const { theme, resolvedTheme } = useTheme();
   const { playClick, playHover, playNotification } = useSound();
   const [showPaymentReminder, setShowPaymentReminder] = useState(false);
   const [paymentKey, setPaymentKey] = useState(0); // Key to force re-render
+  const [currentPaymentReminder, setCurrentPaymentReminder] = useState<PaymentReminder | null>(null);
   
   useEffect(() => {
     console.log("Dashboard - Current theme:", theme);
@@ -96,6 +109,21 @@ export const Dashboard = ({
       color: "bg-teal-500/20 text-teal-500"
     }
   ];
+
+  // Function to show the next due payment
+  const showNextPaymentReminder = () => {
+    if (paymentReminders && paymentReminders.length > 0) {
+      // Get the next due payment (closest to current date)
+      const nextPayment = paymentReminders.reduce((closest, current) => {
+        if (!closest) return current;
+        return current.dueDate < closest.dueDate ? current : closest;
+      }, paymentReminders[0]);
+      
+      setCurrentPaymentReminder(nextPayment);
+      setPaymentKey(prev => prev + 1); // Force re-render to get new meme
+      setShowPaymentReminder(true);
+    }
+  };
 
   return (
     <div className="min-h-screen relative overflow-hidden">
@@ -167,8 +195,7 @@ export const Dashboard = ({
             onClick={() => {
               playClick();
               playNotification(); // Play notification sound
-              setPaymentKey(prev => prev + 1); // Force re-render to get new meme
-              setShowPaymentReminder(true);
+              showNextPaymentReminder();
             }}
             className="h-24 text-lg font-display glass-strong hover-scale glow-purple border-2 border-primary/30 hover:border-primary/60 transition-all text-foreground relative overflow-hidden"
             onMouseEnter={() => playHover()}
@@ -247,12 +274,12 @@ export const Dashboard = ({
       </div>
       
       {/* Payment Reminder Modal */}
-      {showPaymentReminder && (
+      {showPaymentReminder && currentPaymentReminder && (
         <PaymentReminder
           key={paymentKey} // This forces a re-render with a new meme
-          debtorName="You"
-          creditorName="Alice"
-          amount={300}
+          debtorName={currentPaymentReminder.debtorName}
+          creditorName={currentPaymentReminder.creditorName}
+          amount={currentPaymentReminder.amount}
           onPayNow={() => {
             setShowPaymentReminder(false);
             // In a real app, this would update the balance

@@ -48,6 +48,14 @@ interface Streak {
   lastLogged: string;
 }
 
+// Define the payment reminder type
+interface PaymentReminder {
+  debtorName: string;
+  creditorName: string;
+  amount: number;
+  dueDate: Date;
+}
+
 const Index = () => {
   const [currentView, setCurrentView] = useState<View>("splash");
   const [showAddExpense, setShowAddExpense] = useState(false);
@@ -72,6 +80,11 @@ const Index = () => {
   // Sample expenses data
   const [expenses, setExpenses] = useState<Expense[]>([]);
   
+  // Payment reminders data
+  const [paymentReminders, setPaymentReminders] = useState<PaymentReminder[]>([
+    { debtorName: "You", creditorName: "Alice", amount: 300, dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) },
+  ]);
+  
   // Streak data
   const [streak, setStreak] = useState<Streak>({
     current: 15,
@@ -90,13 +103,18 @@ const Index = () => {
     
     setRecentActivity(prev => [newActivity, ...prev.slice(0, 9)]); // Keep only the last 10 activities
     
-    // Add the expense to the expenses list
+    // Add the expense to the expenses list with proper participants
+    const defaultParticipants = ["You", "Alice", "Bob"];
+    const actualParticipants = split <= defaultParticipants.length 
+      ? defaultParticipants.slice(0, split) 
+      : [...defaultParticipants, ...Array(split - defaultParticipants.length).fill("Friend")];
+    
     const newExpense: Expense = {
       id: Date.now().toString(),
       name,
       amount,
       split,
-      participants: ["You", "Alice", "Bob"], // Default participants for now
+      participants: actualParticipants,
       date: new Date()
     };
     
@@ -107,6 +125,9 @@ const Index = () => {
     
     // Update balances based on the new expense
     updateBalances(newExpense);
+    
+    // Update payment reminders based on the new expense
+    updatePaymentReminders(newExpense);
     
     // Show notification
     toast.success(`New expense added: ${name} - ₹${amount.toLocaleString()}`, {
@@ -161,25 +182,55 @@ const Index = () => {
 
   // Function to update balances when a new expense is added
   const updateBalances = (expense: Expense) => {
-    // This is a simplified calculation - in a real app, this would be more complex
-    // For now, we'll just simulate some balance changes
+    // Create a more realistic balance calculation
+    const amountPerPerson = expense.amount / expense.split;
     
-    // Simulate that "You" owe more to Alice
-    const updatedBalances = [...balances];
-    const aliceBalance = updatedBalances.find(b => b.from === "You" && b.to === "Alice");
+    // For demonstration, we'll show a more detailed balance summary
+    let updatedBalances = [...balances];
     
-    if (aliceBalance) {
-      aliceBalance.amount += expense.amount / expense.split;
-    } else {
-      updatedBalances.push({
-        id: updatedBalances.length + 1,
-        from: "You",
-        to: "Alice",
-        amount: expense.amount / expense.split
-      });
-    }
+    // Assume "You" is the one who paid for this expense
+    const payer = "You";
+    
+    // For each participant (except the payer), they owe the payer
+    expense.participants.forEach(participant => {
+      if (participant !== payer) {
+        // Check if a balance entry already exists for this pair
+        const existingBalanceIndex = updatedBalances.findIndex(
+          b => b.from === participant && b.to === payer
+        );
+        
+        if (existingBalanceIndex !== -1) {
+          // Update existing balance
+          updatedBalances[existingBalanceIndex] = {
+            ...updatedBalances[existingBalanceIndex],
+            amount: updatedBalances[existingBalanceIndex].amount + amountPerPerson
+          };
+        } else {
+          // Create new balance entry
+          updatedBalances.push({
+            id: updatedBalances.length + 1,
+            from: participant,
+            to: payer,
+            amount: amountPerPerson
+          });
+        }
+      }
+    });
     
     setBalances(updatedBalances);
+  };
+
+  // Function to update payment reminders when a new expense is added
+  const updatePaymentReminders = (expense: Expense) => {
+    // Create a new payment reminder based on the expense
+    const newReminder: PaymentReminder = {
+      debtorName: "You",
+      creditorName: "Alice",
+      amount: expense.amount / expense.split,
+      dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // Due in 7 days
+    };
+    
+    setPaymentReminders(prev => [...prev, newReminder]);
   };
 
   const renderView = () => {
@@ -214,6 +265,7 @@ const Index = () => {
             onViewAccessibilityImprovements={() => setCurrentView("accessibility-improvements")}
             recentActivity={recentActivity}
             balances={balances}
+            paymentReminders={paymentReminders}
           />
         );
     }
