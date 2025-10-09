@@ -85,7 +85,18 @@ const Index = () => {
     const savedActivity = localStorage.getItem('recentActivity');
     if (savedActivity) {
       try {
-        return JSON.parse(savedActivity);
+        const parsedActivity = JSON.parse(savedActivity);
+        // Remove duplicates based on name and amount, keeping the first occurrence
+        const seen = new Set();
+        const uniqueActivity = parsedActivity.filter((activity: RecentActivity) => {
+          const key = `${activity.name}-${activity.amount}`;
+          if (seen.has(key)) {
+            return false;
+          }
+          seen.add(key);
+          return true;
+        });
+        return uniqueActivity;
       } catch (e) {
         console.error('Failed to parse recent activity from localStorage', e);
       }
@@ -253,7 +264,18 @@ const Index = () => {
       status: "pending"
     };
 
-    setRecentActivity(prev => [newActivity, ...prev.slice(0, 9)]); // Keep only the last 10 activities
+    setRecentActivity(prev => {
+      // Check if an activity with the same name and amount already exists at the top
+      if (prev.length > 0 && 
+          prev[0].name === newActivity.name && 
+          prev[0].amount === newActivity.amount) {
+        // If it's the same as the most recent activity, don't add it again
+        return prev;
+      }
+      
+      // Add the new activity and keep only the last 10 unique activities
+      return [newActivity, ...prev].slice(0, 10);
+    });
 
     // Add the expense to the expenses list with the provided participants
     const newExpense: Expense = {
