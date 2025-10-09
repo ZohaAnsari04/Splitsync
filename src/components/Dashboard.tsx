@@ -151,12 +151,11 @@ export const Dashboard = ({
           </Button>
           
           <Button
-            variant="outline"
             onClick={() => {
               playClick();
               onViewAnalytics();
             }}
-            className="h-24 text-lg font-display glass hover-scale glow-purple border-2 border-primary/30 hover:border-primary/60 transition-all"
+            className="h-24 text-lg font-display glass-strong hover-scale glow-purple border-2 border-primary/30 hover:border-primary/60 transition-all text-foreground"
             onMouseEnter={() => playHover()}
           >
             <BarChart3 className="w-6 h-6 mr-3" />
@@ -165,19 +164,19 @@ export const Dashboard = ({
           
           {/* Fun Payment Reminder Button */}
           <Button
-            variant="outline"
             onClick={() => {
               playClick();
               playNotification(); // Play notification sound
               setPaymentKey(prev => prev + 1); // Force re-render to get new meme
               setShowPaymentReminder(true);
             }}
-            className="h-24 text-lg font-display glass hover-scale glow-purple border-2 border-primary/30 hover:border-primary/60 transition-all relative overflow-hidden"
+            className="h-24 text-lg font-display glass-strong hover-scale glow-purple border-2 border-primary/30 hover:border-primary/60 transition-all text-foreground relative overflow-hidden"
             onMouseEnter={() => playHover()}
           >
             <Bell className="w-6 h-6 mr-3" />
             Payment Reminder
             <span className="absolute top-2 right-2 w-3 h-3 bg-red-500 rounded-full animate-ping"></span>
+            <Zap className="w-5 h-5 ml-3 animate-pulse" />
           </Button>
         </div>
 

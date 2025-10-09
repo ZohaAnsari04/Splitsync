@@ -152,16 +152,21 @@ export const AddExpenseModal = ({ open, onOpenChange, onExpenseAdded }: AddExpen
         }
       }
       
-      // Automatically add expense if all required fields are present
-      if (extractedTitle && extractedAmount) {
-        // Use setTimeout to ensure state updates are processed
-        setTimeout(() => {
-          handleAddExpense();
-        }, 100);
-      }
-      
       playNotification(); // Play notification sound when processing is complete
-      toast.success("Voice command processed! Expense will be added automatically.");
+      
+      // Show success message with split information
+      if (extractedTitle && extractedAmount) {
+        const amountValue = parseFloat(extractedAmount);
+        const participantCount = participantName ? Math.max(participants.length, 2) : participants.length;
+        toast.success(
+          `Voice command processed! Press Enter to add this expense.`,
+          {
+            description: `₹${amountValue.toLocaleString()} will be split among ${participantCount} participant(s).`
+          }
+        );
+      } else {
+        toast.success("Voice command processed!");
+      }
     } catch (error) {
       console.error('Error processing voice command:', error);
       toast.error("Failed to process voice command. Please try again.");
@@ -244,12 +249,26 @@ export const AddExpenseModal = ({ open, onOpenChange, onExpenseAdded }: AddExpen
     // Sound trigger: "cha-ching"
     playClick();
     
-    // Call the onExpenseAdded callback if provided
-    if (onExpenseAdded && title && amount) {
-      onExpenseAdded(title, parseFloat(amount), participants.length);
+    // Validate amount is a valid number
+    const amountValue = parseFloat(amount);
+    if (isNaN(amountValue) || amountValue <= 0) {
+      toast.error("Please enter a valid amount greater than zero.");
+      return;
     }
     
-    toast.success("Expense added successfully! 💫");
+    // Validate we have participants
+    if (participants.length === 0) {
+      toast.error("Please add at least one participant.");
+      return;
+    }
+    
+    // Call the onExpenseAdded callback if provided
+    if (onExpenseAdded && title) {
+      // Pass the title, amount, and number of participants to split among
+      onExpenseAdded(title, amountValue, participants.length);
+    }
+    
+    toast.success(`Expense added successfully! Amount: ₹${amountValue.toLocaleString()} split among ${participants.length} participant(s). 💫`);
     onOpenChange(false);
     
     // Reset form
@@ -365,6 +384,7 @@ export const AddExpenseModal = ({ open, onOpenChange, onExpenseAdded }: AddExpen
                   <div className="glass p-4 rounded-lg mt-4">
                     <p className="text-sm text-muted-foreground mb-2">You said:</p>
                     <p className="font-medium">{transcript}</p>
+                    <p className="text-sm text-muted-foreground mt-2">Press Enter to add this expense</p>
                   </div>
                 )}
                 
@@ -397,12 +417,25 @@ export const AddExpenseModal = ({ open, onOpenChange, onExpenseAdded }: AddExpen
 
         {/* Show expense details if any input exists */}
         {(title || amount || inputMode === "voice") && (
-          <div className="space-y-6 animate-slide-up">
+          <div className="space-y-6 animate-slide-up" onKeyDown={(e) => {
+            // Allow user to press Enter to add expense after voice command
+            if (e.key === 'Enter' && inputMode === "voice" && title && amount && !isProcessing) {
+              e.preventDefault();
+              handleAddExpense();
+            }
+          }} tabIndex={0}>
             <div className="glass p-4 rounded-lg border border-accent/30">
               <div className="flex items-center gap-2 mb-3">
                 <Users className="w-5 h-5 text-accent" />
                 <h3 className="font-display">Select Participants</h3>
               </div>
+              
+              {/* Show Enter key hint when voice command has been processed */}
+              {inputMode === "voice" && title && amount && !isProcessing && (
+                <div className="mb-3 p-2 bg-primary/10 rounded text-center text-sm">
+                  <kbd className="px-2 py-1 bg-background rounded border">Enter</kbd> to add expense
+                </div>
+              )}
               
               {/* Custom participant form */}
               {showAddParticipantForm && (
