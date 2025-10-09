@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, TrendingUp, Users, Wallet, Zap, BarChart3, Trophy, PieChart, Smartphone, Shield, Settings, Users as UsersIcon, Bell } from "lucide-react";
+import { Plus, TrendingUp, Users, Wallet, Zap, BarChart3, Trophy, PieChart, Shield, Settings, Users as UsersIcon, Bell } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import logo from "@/assets/logo.png";
 import heroBg from "@/assets/hero-bg.png";
@@ -16,7 +16,6 @@ interface DashboardProps {
   onViewGamification: () => void;
   onViewFinancialInsights?: () => void;
   onViewEnhancedUI?: () => void;
-  onViewMobileFeatures?: () => void;
   onViewAdvancedGamification?: () => void;
   onViewSecurityPrivacy?: () => void;
   onViewAccessibilityImprovements?: () => void;
@@ -40,7 +39,6 @@ export const Dashboard = ({
   onViewGamification,
   onViewFinancialInsights,
   onViewEnhancedUI,
-  onViewMobileFeatures,
   onViewAdvancedGamification,
   onViewSecurityPrivacy,
   onViewAccessibilityImprovements,
@@ -78,12 +76,6 @@ export const Dashboard = ({
       icon: <Zap className="w-5 h-5" />,
       action: onViewEnhancedUI,
       color: "bg-purple-500/20 text-purple-500"
-    },
-    {
-      name: "Mobile Features",
-      icon: <Smartphone className="w-5 h-5" />,
-      action: onViewMobileFeatures,
-      color: "bg-orange-500/20 text-orange-500"
     },
     {
       name: "Advanced Gamification",

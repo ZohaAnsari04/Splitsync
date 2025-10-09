@@ -5,7 +5,6 @@ import {
   Trophy, 
   PieChart, 
   Zap, 
-  Smartphone, 
   Shield, 
   Settings, 
   Users,
@@ -20,7 +19,6 @@ interface NavigationMenuProps {
   onViewGamification: () => void;
   onViewFinancialInsights: () => void;
   onViewEnhancedUI: () => void;
-  onViewMobileFeatures: () => void;
   onViewAdvancedGamification: () => void;
   onViewSecurityPrivacy: () => void;
   onViewAccessibilityImprovements: () => void;
@@ -32,7 +30,6 @@ export const NavigationMenu = ({
   onViewGamification,
   onViewFinancialInsights,
   onViewEnhancedUI,
-  onViewMobileFeatures,
   onViewAdvancedGamification,
   onViewSecurityPrivacy,
   onViewAccessibilityImprovements
@@ -46,7 +43,6 @@ export const NavigationMenu = ({
     { name: "Gamification", icon: <Trophy className="w-4 h-4" />, action: onViewGamification },
     { name: "Financial Insights", icon: <PieChart className="w-4 h-4" />, action: onViewFinancialInsights },
     { name: "Enhanced UI", icon: <Zap className="w-4 h-4" />, action: onViewEnhancedUI },
-    { name: "Mobile Features", icon: <Smartphone className="w-4 h-4" />, action: onViewMobileFeatures },
     { name: "Advanced Gamification", icon: <Trophy className="w-4 h-4" />, action: onViewAdvancedGamification },
     { name: "Security & Privacy", icon: <Shield className="w-4 h-4" />, action: onViewSecurityPrivacy },
     { name: "Accessibility", icon: <Users className="w-4 h-4" />, action: onViewAccessibilityImprovements }

@@ -32,12 +32,6 @@
 - **Data Export**: Added CSV, PDF, and backup export options
 - **Customizable Dashboard Widgets**: Created widget management system
 
-## 6. Mobile-Specific Features
-- **Camera Receipt Scanning with OCR**: Created [MobileFeatures.tsx](src/components/MobileFeatures.tsx) with OCR scanning
-- **Biometric Authentication**: Added fingerprint/face recognition support
-- **Push Notifications**: Implemented notification system with settings
-- **Widget Support**: Added home screen widget support
-
 ## 7. Advanced Gamification
 - **Streak Tracking**: Created [AdvancedGamification.tsx](src/components/AdvancedGamification.tsx) with streak management
 - **Social Challenges**: Implemented challenge system between friends

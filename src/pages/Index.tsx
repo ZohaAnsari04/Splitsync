@@ -6,7 +6,6 @@ import { Analytics } from "@/components/Analytics";
 import { Gamification } from "@/components/Gamification";
 import { FinancialInsights } from "@/components/FinancialInsights";
 import { EnhancedUI } from "@/components/EnhancedUI";
-import { MobileFeatures } from "@/components/MobileFeatures";
 import { AdvancedGamification } from "@/components/AdvancedGamification";
 import { SecurityPrivacy } from "@/components/SecurityPrivacy";
 import { AccessibilityImprovements } from "@/components/AccessibilityImprovements";
@@ -14,7 +13,7 @@ import { NavigationMenu } from "@/components/NavigationMenu";
 import { useSound } from "@/hooks/useSound";
 import { toast } from "sonner";
 
-type View = "splash" | "dashboard" | "analytics" | "gamification" | "financial-insights" | "enhanced-ui" | "mobile-features" | "advanced-gamification" | "security-privacy" | "accessibility-improvements";
+type View = "splash" | "dashboard" | "analytics" | "gamification" | "financial-insights" | "enhanced-ui" | "advanced-gamification" | "security-privacy" | "accessibility-improvements";
 
 // Define the recent activity type
 interface RecentActivity {
@@ -45,20 +44,28 @@ interface Expense {
 const Index = () => {
   const [currentView, setCurrentView] = useState<View>("splash");
   const [showAddExpense, setShowAddExpense] = useState(false);
+  const { playClick, playHover, playNotification } = useSound();
+  
+  // Sample recent activity data
   const [recentActivity, setRecentActivity] = useState<RecentActivity[]>([
     { name: "Dinner at Zomato", amount: "₹1,200", split: 4, status: "pending" },
     { name: "Movie Tickets", amount: "₹800", split: 2, status: "settled" },
     { name: "Grocery Shopping", amount: "₹2,450", split: 3, status: "pending" },
+    { name: "Fuel", amount: "₹1,800", split: 4, status: "pending" },
+    { name: "Online Shopping", amount: "₹3,200", split: 1, status: "settled" },
   ]);
+  
+  // Sample balance data
   const [balances, setBalances] = useState<Balance[]>([
     { id: 1, from: "You", to: "Alice", amount: 300 },
     { id: 2, from: "Bob", to: "You", amount: 150 },
     { id: 3, from: "Alice", to: "Bob", amount: 75 },
   ]);
+  
+  // Sample expenses data
   const [expenses, setExpenses] = useState<Expense[]>([]);
-  const { playClick, playNotification } = useSound();
-
-  // Function to add a new expense to recent activity
+  
+  // Add a new expense to recent activity
   const addExpenseToActivity = (name: string, amount: number, split: number) => {
     const newActivity: RecentActivity = {
       name,
@@ -129,8 +136,6 @@ const Index = () => {
         return <FinancialInsights onBack={() => setCurrentView("dashboard")} />;
       case "enhanced-ui":
         return <EnhancedUI onBack={() => setCurrentView("dashboard")} />;
-      case "mobile-features":
-        return <MobileFeatures onBack={() => setCurrentView("dashboard")} />;
       case "advanced-gamification":
         return <AdvancedGamification onBack={() => setCurrentView("dashboard")} />;
       case "security-privacy":
@@ -146,7 +151,6 @@ const Index = () => {
             onViewGamification={() => setCurrentView("gamification")}
             onViewFinancialInsights={() => setCurrentView("financial-insights")}
             onViewEnhancedUI={() => setCurrentView("enhanced-ui")}
-            onViewMobileFeatures={() => setCurrentView("mobile-features")}
             onViewAdvancedGamification={() => setCurrentView("advanced-gamification")}
             onViewSecurityPrivacy={() => setCurrentView("security-privacy")}
             onViewAccessibilityImprovements={() => setCurrentView("accessibility-improvements")}
@@ -178,10 +182,6 @@ const Index = () => {
     playClick();
     setCurrentView("enhanced-ui");
   };
-  const navigateToMobileFeatures = () => {
-    playClick();
-    setCurrentView("mobile-features");
-  };
   const navigateToAdvancedGamification = () => {
     playClick();
     setCurrentView("advanced-gamification");
@@ -210,7 +210,6 @@ const Index = () => {
           onViewGamification={navigateToGamification}
           onViewFinancialInsights={navigateToFinancialInsights}
           onViewEnhancedUI={navigateToEnhancedUI}
-          onViewMobileFeatures={navigateToMobileFeatures}
           onViewAdvancedGamification={navigateToAdvancedGamification}
           onViewSecurityPrivacy={navigateToSecurityPrivacy}
           onViewAccessibilityImprovements={navigateToAccessibilityImprovements}
