@@ -7,7 +7,6 @@ import heroBg from "@/assets/hero-bg.png";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { useSound } from "@/hooks/useSound";
-import { BalanceSummary } from "./BalanceSummary";
 import { PaymentReminder } from "./PaymentReminder";
 
 // Define the payment reminder type
@@ -114,14 +113,25 @@ export const Dashboard = ({
   const showNextPaymentReminder = () => {
     if (paymentReminders && paymentReminders.length > 0) {
       // Get the next due payment (closest to current date)
-      const nextPayment = paymentReminders.reduce((closest, current) => {
-        if (!closest) return current;
-        return current.dueDate < closest.dueDate ? current : closest;
-      }, paymentReminders[0]);
+      const now = new Date();
+      const upcomingPayments = paymentReminders.filter(reminder => reminder.dueDate > now);
       
-      setCurrentPaymentReminder(nextPayment);
-      setPaymentKey(prev => prev + 1); // Force re-render to get new meme
-      setShowPaymentReminder(true);
+      if (upcomingPayments.length > 0) {
+        const nextPayment = upcomingPayments.reduce((closest, current) => {
+          if (!closest) return current;
+          return current.dueDate < closest.dueDate ? current : closest;
+        }, upcomingPayments[0]);
+        
+        setCurrentPaymentReminder(nextPayment);
+        setPaymentKey(prev => prev + 1); // Force re-render to get new meme
+        setShowPaymentReminder(true);
+      } else {
+        // If no upcoming payments, show a message
+        alert("No upcoming payments due!");
+      }
+    } else {
+      // If no payment reminders, show a message
+      alert("No payment reminders set up yet!");
     }
   };
 
@@ -269,8 +279,6 @@ export const Dashboard = ({
           </div>
         </Card>
 
-        {/* Balance Summary */}
-        <BalanceSummary balances={balances} />
       </div>
       
       {/* Payment Reminder Modal */}

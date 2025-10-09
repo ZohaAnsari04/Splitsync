@@ -61,14 +61,25 @@ const Index = () => {
   const [showAddExpense, setShowAddExpense] = useState(false);
   const { playClick, playHover, playNotification } = useSound();
   
-  // Sample recent activity data
-  const [recentActivity, setRecentActivity] = useState<RecentActivity[]>([
-    { name: "Dinner at Zomato", amount: "₹1,200", split: 4, status: "pending" },
-    { name: "Movie Tickets", amount: "₹800", split: 2, status: "settled" },
-    { name: "Grocery Shopping", amount: "₹2,450", split: 3, status: "pending" },
-    { name: "Fuel", amount: "₹1,800", split: 4, status: "pending" },
-    { name: "Online Shopping", amount: "₹3,200", split: 1, status: "settled" },
-  ]);
+  // Load recent activity data from localStorage or use sample data
+  const [recentActivity, setRecentActivity] = useState<RecentActivity[]>(() => {
+    const savedActivity = localStorage.getItem('recentActivity');
+    if (savedActivity) {
+      try {
+        return JSON.parse(savedActivity);
+      } catch (e) {
+        console.error('Failed to parse recent activity from localStorage', e);
+      }
+    }
+    // Default sample data
+    return [
+      { name: "Dinner at Zomato", amount: "₹1,200", split: 4, status: "pending" },
+      { name: "Movie Tickets", amount: "₹800", split: 2, status: "settled" },
+      { name: "Grocery Shopping", amount: "₹2,450", split: 3, status: "pending" },
+      { name: "Fuel", amount: "₹1,800", split: 4, status: "pending" },
+      { name: "Online Shopping", amount: "₹3,200", split: 1, status: "settled" },
+    ];
+  });
   
   // Sample balance data
   const [balances, setBalances] = useState<Balance[]>([
@@ -80,17 +91,53 @@ const Index = () => {
   // Sample expenses data
   const [expenses, setExpenses] = useState<Expense[]>([]);
   
-  // Payment reminders data
-  const [paymentReminders, setPaymentReminders] = useState<PaymentReminder[]>([
-    { debtorName: "You", creditorName: "Alice", amount: 300, dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) },
-  ]);
-  
+  // Payment reminders data with localStorage persistence
+  const [paymentReminders, setPaymentReminders] = useState<PaymentReminder[]>(() => {
+    const savedReminders = localStorage.getItem('paymentReminders');
+    if (savedReminders) {
+      try {
+        const parsedReminders = JSON.parse(savedReminders);
+        // Convert date strings back to Date objects
+        return parsedReminders.map((reminder: any) => ({
+          ...reminder,
+          dueDate: new Date(reminder.dueDate)
+        }));
+      } catch (e) {
+        console.error('Failed to parse payment reminders from localStorage', e);
+      }
+    }
+    // Default sample data
+    return [
+      { debtorName: "You", creditorName: "Alice", amount: 300, dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) },
+    ];
+  });
+
+  // Save payment reminders to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('paymentReminders', JSON.stringify(paymentReminders));
+  }, [paymentReminders]);
+
+  // Function to clear all payment reminders
+  const clearPaymentReminders = () => {
+    setPaymentReminders([]);
+  };
+
   // Streak data
   const [streak, setStreak] = useState<Streak>({
     current: 15,
     longest: 28,
     lastLogged: new Date().toISOString().split('T')[0]
   });
+  
+  // Function to clear all recent activity
+  const clearRecentActivity = () => {
+    setRecentActivity([]);
+  };
+
+  // Save recent activity to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('recentActivity', JSON.stringify(recentActivity));
+  }, [recentActivity]);
   
   // Add a new expense to recent activity
   const addExpenseToActivity = (name: string, amount: number, split: number) => {
@@ -222,15 +269,26 @@ const Index = () => {
 
   // Function to update payment reminders when a new expense is added
   const updatePaymentReminders = (expense: Expense) => {
-    // Create a new payment reminder based on the expense
-    const newReminder: PaymentReminder = {
-      debtorName: "You",
-      creditorName: "Alice",
-      amount: expense.amount / expense.split,
-      dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // Due in 7 days
-    };
+    // Create payment reminders for each participant who owes money
+    const amountPerPerson = expense.amount / expense.split;
+    const payer = "You"; // Assume "You" is the payer
     
-    setPaymentReminders(prev => [...prev, newReminder]);
+    // Create reminders for each participant (except the payer)
+    const newReminders: PaymentReminder[] = [];
+    
+    expense.participants.forEach(participant => {
+      if (participant !== payer) {
+        newReminders.push({
+          debtorName: participant,
+          creditorName: payer,
+          amount: amountPerPerson,
+          dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // Due in 7 days
+        });
+      }
+    });
+    
+    // Add all new reminders to the existing ones
+    setPaymentReminders(prev => [...prev, ...newReminders]);
   };
 
   const renderView = () => {
