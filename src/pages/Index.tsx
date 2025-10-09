@@ -495,6 +495,11 @@ const Index = () => {
             recentActivity={recentActivity}
             balances={balances}
             paymentReminders={paymentReminders}
+            onMarkPaymentAsPaid={(reminderId) => {
+              setPaymentReminders(prev => prev.map(r =>
+                r.id === reminderId ? { ...r, status: "completed" } : r
+              ));
+            }}
           />
         );
     }

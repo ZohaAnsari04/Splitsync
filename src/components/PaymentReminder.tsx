@@ -208,7 +208,10 @@ export const PaymentReminder = ({
               
               <Button 
                 className="w-full glass-strong hover-scale text-foreground font-display mt-6"
-                onClick={() => onPayNow()}
+                onClick={() => {
+                  // Close the entire payment reminder modal
+                  onPayNow();
+                }}
               >
                 Continue
               </Button>

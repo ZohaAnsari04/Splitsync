@@ -46,6 +46,7 @@ interface DashboardProps {
     amount: number;
   }[];
   paymentReminders?: PaymentReminder[];
+  onMarkPaymentAsPaid?: (reminderId: string) => void;
 }
 
 export const Dashboard = ({
@@ -74,7 +75,8 @@ export const Dashboard = ({
       dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       status: "pending"
     },
-  ]
+  ],
+  onMarkPaymentAsPaid
 }: DashboardProps) => {
   const { theme, resolvedTheme } = useTheme();
   const { playClick, playHover, playNotification } = useSound();
@@ -183,8 +185,9 @@ export const Dashboard = ({
 
   // Function to mark payment reminder as paid
   const markPaymentAsPaid = (reminderId: string) => {
-    // In a real app, this would update the paymentReminders state
-    // For now, we'll just show a success message
+    // Update the paymentReminders state to mark the reminder as completed
+    // This will be passed down from the parent component
+    // For now, we'll just show a success message and close the modal
     toast.success("Payment marked as completed!");
     setShowPaymentReminder(false);
   };
@@ -379,7 +382,13 @@ export const Dashboard = ({
           groupId={currentPaymentReminder.groupId}
           expenseId={currentPaymentReminder.expenseId}
           status={currentPaymentReminder.status}
-          onPayNow={() => markPaymentAsPaid(currentPaymentReminder.id)}
+          onPayNow={() => {
+            if (onMarkPaymentAsPaid) {
+              onMarkPaymentAsPaid(currentPaymentReminder.id);
+            }
+            // Always close the payment reminder modal
+            setShowPaymentReminder(false);
+          }}
           onDismiss={() => setShowPaymentReminder(false)}
         />
       )}
