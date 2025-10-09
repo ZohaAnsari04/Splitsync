@@ -1,6 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -10,9 +11,10 @@ import {
   BarChart3, 
   Wallet,
   ArrowUpDown,
-  Plus
+  Plus,
+  X
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSound } from "@/hooks/useSound";
 
 interface Budget {
@@ -50,16 +52,38 @@ interface Forecast {
 }
 
 export const FinancialInsights = ({ onBack }: { onBack: () => void }) => {
-  const [timeRange, setTimeRange] = useState<"week" | "month" | "quarter">("month");
   const { playClick, playHover } = useSound();
   
-  // Sample data for budgets
-  const budgets: Budget[] = [
+  // State for budgets
+  const [budgets, setBudgets] = useState<Budget[]>([
     { id: "1", category: "Food & Dining", allocated: 5000, spent: 4200, color: "bg-red-500" },
     { id: "2", category: "Transportation", allocated: 3000, spent: 2800, color: "bg-blue-500" },
     { id: "3", category: "Entertainment", allocated: 2000, spent: 2500, color: "bg-purple-500" },
     { id: "4", category: "Utilities", allocated: 4000, spent: 3800, color: "bg-green-500" },
-  ];
+  ]);
+  
+  // State for savings goals
+  const [savingsGoals, setSavingsGoals] = useState<SavingsGoal[]>([
+    { id: "1", name: "Vacation Fund", target: 50000, current: 35000, deadline: "2024-12-31" },
+    { id: "2", name: "Emergency Fund", target: 100000, current: 75000, deadline: "2025-06-30" },
+    { id: "3", name: "New Laptop", target: 80000, current: 20000, deadline: "2024-11-15" },
+  ]);
+  
+  // State for adding new budget
+  const [showAddBudgetForm, setShowAddBudgetForm] = useState(false);
+  const [newBudgetCategory, setNewBudgetCategory] = useState("");
+  const [newBudgetAmount, setNewBudgetAmount] = useState("");
+  
+  // State for adding new goal
+  const [showAddGoalForm, setShowAddGoalForm] = useState(false);
+  const [newGoalName, setNewGoalName] = useState("");
+  const [newGoalTarget, setNewGoalTarget] = useState("");
+  const [newGoalDeadline, setNewGoalDeadline] = useState("");
+  
+  // Calculated totals
+  const [totalBudget, setTotalBudget] = useState(0);
+  const [totalSpent, setTotalSpent] = useState(0);
+  const [budgetPercentage, setBudgetPercentage] = useState(0);
 
   // Sample data for spending comparisons
   const spendingComparisons: SpendingComparison[] = [
@@ -78,13 +102,6 @@ export const FinancialInsights = ({ onBack }: { onBack: () => void }) => {
     { category: "Other", percentage: 5, trend: "down" },
   ];
 
-  // Sample data for savings goals
-  const savingsGoals: SavingsGoal[] = [
-    { id: "1", name: "Vacation Fund", target: 50000, current: 35000, deadline: "2024-12-31" },
-    { id: "2", name: "Emergency Fund", target: 100000, current: 75000, deadline: "2025-06-30" },
-    { id: "3", name: "New Laptop", target: 80000, current: 20000, deadline: "2024-11-15" },
-  ];
-
   // Sample data for forecasts
   const forecasts: Forecast[] = [
     { month: "Oct", predicted: 14500, previous: 13500 },
@@ -94,10 +111,69 @@ export const FinancialInsights = ({ onBack }: { onBack: () => void }) => {
     { month: "Feb", predicted: 14200, previous: 13200 },
   ];
 
-  // Calculate total budget vs spending
-  const totalBudget = budgets.reduce((sum, budget) => sum + budget.allocated, 0);
-  const totalSpent = budgets.reduce((sum, budget) => sum + budget.spent, 0);
-  const budgetPercentage = Math.min(100, Math.round((totalSpent / totalBudget) * 100));
+  // Colors for budget categories
+  const budgetColors = [
+    "bg-red-500",
+    "bg-blue-500",
+    "bg-purple-500",
+    "bg-green-500",
+    "bg-yellow-500",
+    "bg-pink-500",
+    "bg-indigo-500",
+    "bg-teal-500"
+  ];
+
+  // Calculate totals whenever budgets change
+  useEffect(() => {
+    const newTotalBudget = budgets.reduce((sum, budget) => sum + budget.allocated, 0);
+    const newTotalSpent = budgets.reduce((sum, budget) => sum + budget.spent, 0);
+    const newBudgetPercentage = Math.min(100, Math.round((newTotalSpent / newTotalBudget) * 100));
+    
+    setTotalBudget(newTotalBudget);
+    setTotalSpent(newTotalSpent);
+    setBudgetPercentage(newBudgetPercentage);
+  }, [budgets]);
+
+  // Add a new budget
+  const handleAddBudget = () => {
+    if (newBudgetCategory && newBudgetAmount) {
+      const randomColor = budgetColors[Math.floor(Math.random() * budgetColors.length)];
+      
+      const newBudget: Budget = {
+        id: Date.now().toString(),
+        category: newBudgetCategory,
+        allocated: parseFloat(newBudgetAmount),
+        spent: 0,
+        color: randomColor
+      };
+      
+      setBudgets([...budgets, newBudget]);
+      setNewBudgetCategory("");
+      setNewBudgetAmount("");
+      setShowAddBudgetForm(false);
+      playClick();
+    }
+  };
+
+  // Add a new savings goal
+  const handleAddGoal = () => {
+    if (newGoalName && newGoalTarget && newGoalDeadline) {
+      const newGoal: SavingsGoal = {
+        id: Date.now().toString(),
+        name: newGoalName,
+        target: parseFloat(newGoalTarget),
+        current: 0,
+        deadline: newGoalDeadline
+      };
+      
+      setSavingsGoals([...savingsGoals, newGoal]);
+      setNewGoalName("");
+      setNewGoalTarget("");
+      setNewGoalDeadline("");
+      setShowAddGoalForm(false);
+      playClick();
+    }
+  };
 
   return (
     <div className="min-h-screen relative overflow-hidden p-6">
@@ -121,43 +197,6 @@ export const FinancialInsights = ({ onBack }: { onBack: () => void }) => {
           </Button>
         </div>
 
-        {/* Time Range Selector */}
-        <div className="flex gap-2 mb-6">
-          <Button 
-            variant={timeRange === "week" ? "default" : "outline"} 
-            onClick={() => {
-              playClick();
-              setTimeRange("week");
-            }}
-            className={timeRange === "week" ? "glass-strong text-foreground" : "glass text-foreground"}
-            onMouseEnter={() => playHover()}
-          >
-            Week
-          </Button>
-          <Button 
-            variant={timeRange === "month" ? "default" : "outline"} 
-            onClick={() => {
-              playClick();
-              setTimeRange("month");
-            }}
-            className={timeRange === "month" ? "glass-strong text-foreground" : "glass text-foreground"}
-            onMouseEnter={() => playHover()}
-          >
-            Month
-          </Button>
-          <Button 
-            variant={timeRange === "quarter" ? "default" : "outline"} 
-            onClick={() => {
-              playClick();
-              setTimeRange("quarter");
-            }}
-            className={timeRange === "quarter" ? "glass-strong text-foreground" : "glass text-foreground"}
-            onMouseEnter={() => playHover()}
-          >
-            Quarter
-          </Button>
-        </div>
-
         {/* Budget Overview */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           <Card className="glass-strong p-6 hover-scale">
@@ -169,13 +208,70 @@ export const FinancialInsights = ({ onBack }: { onBack: () => void }) => {
               <Button 
                 size="sm" 
                 className="glass-strong hover-scale text-foreground"
-                onClick={() => playClick()}
+                onClick={() => {
+                  playClick();
+                  setShowAddBudgetForm(!showAddBudgetForm);
+                }}
                 onMouseEnter={() => playHover()}
               >
                 <Plus className="w-4 h-4 mr-1" />
                 Add Budget
               </Button>
             </div>
+            
+            {/* Add Budget Form */}
+            {showAddBudgetForm && (
+              <div className="mb-4 p-4 glass rounded-lg border border-primary/20 animate-slide-up">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="font-semibold">Add New Budget</h3>
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => {
+                      playClick();
+                      setShowAddBudgetForm(false);
+                    }}
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
+                <div className="space-y-3">
+                  <div>
+                    <label className="text-sm text-muted-foreground">Category</label>
+                    <Input
+                      placeholder="e.g., Groceries, Entertainment"
+                      value={newBudgetCategory}
+                      onChange={(e) => {
+                        setNewBudgetCategory(e.target.value);
+                        playClick();
+                      }}
+                      className="glass mt-1"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm text-muted-foreground">Allocated Amount (₹)</label>
+                    <Input
+                      type="number"
+                      placeholder="e.g., 5000"
+                      value={newBudgetAmount}
+                      onChange={(e) => {
+                        setNewBudgetAmount(e.target.value);
+                        playClick();
+                      }}
+                      className="glass mt-1"
+                    />
+                  </div>
+                  <Button
+                    className="w-full glass-strong hover-scale text-foreground"
+                    onClick={handleAddBudget}
+                    disabled={!newBudgetCategory || !newBudgetAmount}
+                    onMouseEnter={() => playHover()}
+                  >
+                    Add Budget
+                  </Button>
+                </div>
+              </div>
+            )}
             
             <div className="space-y-4">
               {budgets.map((budget) => {
@@ -286,13 +382,82 @@ export const FinancialInsights = ({ onBack }: { onBack: () => void }) => {
               <Button 
                 size="sm" 
                 className="glass-strong hover-scale text-foreground"
-                onClick={() => playClick()}
+                onClick={() => {
+                  playClick();
+                  setShowAddGoalForm(!showAddGoalForm);
+                }}
                 onMouseEnter={() => playHover()}
               >
                 <Plus className="w-4 h-4 mr-1" />
                 Add Goal
               </Button>
             </div>
+            
+            {/* Add Goal Form */}
+            {showAddGoalForm && (
+              <div className="mb-4 p-4 glass rounded-lg border border-primary/20 animate-slide-up">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="font-semibold">Add New Goal</h3>
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => {
+                      playClick();
+                      setShowAddGoalForm(false);
+                    }}
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
+                <div className="space-y-3">
+                  <div>
+                    <label className="text-sm text-muted-foreground">Goal Name</label>
+                    <Input
+                      placeholder="e.g., Vacation Fund, Emergency Savings"
+                      value={newGoalName}
+                      onChange={(e) => {
+                        setNewGoalName(e.target.value);
+                        playClick();
+                      }}
+                      className="glass mt-1"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm text-muted-foreground">Target Amount (₹)</label>
+                    <Input
+                      type="number"
+                      placeholder="e.g., 50000"
+                      value={newGoalTarget}
+                      onChange={(e) => {
+                        setNewGoalTarget(e.target.value);
+                        playClick();
+                      }}
+                      className="glass mt-1"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm text-muted-foreground">Deadline</label>
+                    <Input
+                      type="date"
+                      value={newGoalDeadline}
+                      onChange={(e) => {
+                        setNewGoalDeadline(e.target.value);
+                        playClick();
+                      }}
+                      className="glass mt-1"
+                    />
+                  </div>
+                  <Button
+                    className="w-full glass-strong hover-scale text-foreground"
+                    onClick={handleAddGoal}
+                    disabled={!newGoalName || !newGoalTarget || !newGoalDeadline}
+                    onMouseEnter={() => playHover()}
+                  >
+                    Add Goal
+                  </Button>
+                </div>
+              </div>
+            )}
             
             <div className="space-y-4">
               {savingsGoals.map((goal) => {
