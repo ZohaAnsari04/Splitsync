@@ -254,14 +254,49 @@ export const EnhancedUI = ({ onBack }: { onBack: () => void }) => {
                 Track where your expenses occurred with integrated maps
               </p>
               
-              <div className="bg-secondary/20 rounded-lg h-64 mb-4 flex items-center justify-center">
-                <div className="text-center">
-                  <img 
-                    src={logo} 
-                    alt="SplitSync Logo"
-                    className="w-16 h-16 mx-auto mb-2 opacity-50"
-                  />
-                  <p className="text-muted-foreground">Interactive Map View</p>
+              <div className="bg-secondary/20 rounded-lg h-64 mb-4 flex items-center justify-center overflow-hidden">
+                <div className="relative w-full h-full">
+                  {/* Static map background */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-green-100">
+                    {/* Simplified map representation */}
+                    <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiNmMGY0ZjgiLz48cGF0aCBkPSJNMjAgMjBoNjB2NjBIMjB6IiBmaWxsPSIjZGRlNmZmIi8+PHBhdGggZD0iTTMwIDMwaDQwdjQwSDMweiIgZmlsbD0iI2JiZGVlMCIvPjxwYXRoIGQ9Ik00MCA0MGgyMHYyMEg0MHoiIGZpbGw9IiNmZmNjMDAiLz48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI1IiBmaWxsPSIjZmYwMDAwIi8+PC9zdmc+')] opacity-30"></div>
+                    
+                    {/* Map markers for expense locations */}
+                    <div className="absolute" style={{top: '30%', left: '40%'}}>
+                      <div className="relative">
+                        <MapPin className="w-6 h-6 text-red-500 drop-shadow-lg" />
+                        <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-black/80 text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 hover:opacity-100 transition-opacity">
+                          Delhi: ₹1,200
+                        </div>
+                      </div>
+                    </div>
+                    <div className="absolute" style={{top: '60%', left: '30%'}}>
+                      <div className="relative">
+                        <MapPin className="w-6 h-6 text-blue-500 drop-shadow-lg" />
+                        <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-black/80 text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 hover:opacity-100 transition-opacity">
+                          Mumbai: ₹2,450
+                        </div>
+                      </div>
+                    </div>
+                    <div className="absolute" style={{top: '50%', left: '60%'}}>
+                      <div className="relative">
+                        <MapPin className="w-6 h-6 text-green-500 drop-shadow-lg" />
+                        <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-black/80 text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 hover:opacity-100 transition-opacity">
+                          Bangalore: ₹800
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Map controls */}
+                  <div className="absolute top-2 right-2 flex flex-col gap-1">
+                    <button className="w-8 h-8 bg-white/80 rounded flex items-center justify-center shadow hover:bg-white transition-colors">
+                      <span className="text-lg font-bold text-gray-700">+</span>
+                    </button>
+                    <button className="w-8 h-8 bg-white/80 rounded flex items-center justify-center shadow hover:bg-white transition-colors">
+                      <span className="text-lg font-bold text-gray-700">-</span>
+                    </button>
+                  </div>
                 </div>
               </div>
               
