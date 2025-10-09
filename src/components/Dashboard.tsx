@@ -66,7 +66,14 @@ export const Dashboard = ({
     { id: 3, from: "Alice", to: "Bob", amount: 75 },
   ],
   paymentReminders = [
-    { debtorName: "You", creditorName: "Alice", amount: 300, dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) },
+    { 
+      id: "1", 
+      debtorName: "You", 
+      creditorName: "Alice", 
+      amount: 300, 
+      dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      status: "pending"
+    },
   ]
 }: DashboardProps) => {
   const { theme, resolvedTheme } = useTheme();
@@ -214,7 +221,7 @@ export const Dashboard = ({
               onMouseEnter={() => playHover()}
             >
               <Trophy className="w-4 h-4 mr-2" />
-              <span className="font-mono">Karma: 1,234</span>
+              <span className="font-mono text-foreground">Karma: 1,234</span>
             </Button>
             <ThemeToggle />
           </div>
@@ -259,8 +266,8 @@ export const Dashboard = ({
           >
             <Bell className="w-6 h-6 mr-3" />
             <div className="text-left">
-              <div className="font-semibold">Payment Reminders</div>
-              <div className="text-sm opacity-80">
+              <div className="font-semibold text-foreground">Payment Reminders</div>
+              <div className="text-sm text-foreground/80">
                 {paymentSummary.pending > 0 ? `${paymentSummary.pending} pending` : "All caught up"}
               </div>
             </div>
@@ -292,7 +299,7 @@ export const Dashboard = ({
                   <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-2 ${category.color}`}>
                     {category.icon}
                   </div>
-                  <span className="text-sm font-medium">{category.name}</span>
+                  <span className="text-sm font-medium text-foreground">{category.name}</span>
                 </Button>
               ))}
             </div>
@@ -314,8 +321,8 @@ export const Dashboard = ({
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-semibold">{activity.name}</p>
-                    <p className="text-sm text-muted-foreground">Split among {activity.split} people</p>
+                    <p className="font-semibold text-foreground">{activity.name}</p>
+                    <p className="text-sm text-foreground/70">Split among {activity.split} people</p>
                   </div>
                   
                   <div className="text-right">
@@ -323,8 +330,8 @@ export const Dashboard = ({
                     <span
                       className={`text-xs px-2 py-1 rounded-full ${
                         activity.status === "settled"
-                          ? "bg-accent/20 text-accent"
-                          : "bg-primary/20 text-primary"
+                          ? "bg-accent/20 text-accent-foreground"
+                          : "bg-primary/20 text-primary-foreground"
                       }`}
                     >
                       {activity.status}
@@ -339,8 +346,8 @@ export const Dashboard = ({
               <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
                 <Activity className="w-8 h-8 text-primary" />
               </div>
-              <h4 className="text-lg font-semibold mb-2">No recent activity</h4>
-              <p className="text-muted-foreground mb-4">
+              <h4 className="text-lg font-semibold mb-2 text-foreground">No recent activity</h4>
+              <p className="text-foreground/80 mb-4">
                 Add some expenses to see your recent activity here.
               </p>
               <Button

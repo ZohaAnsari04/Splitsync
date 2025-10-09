@@ -376,8 +376,9 @@ export const PaymentReminders = ({
                             onMouseEnter={() => playHover()}
                           >
                             <Check className="w-4 h-4 mr-2" />
-                            Mark Paid
+                            <span className="text-foreground">Mark Paid</span>
                           </Button>
+
                         )}
                         <Button
                           size="sm"
@@ -399,8 +400,8 @@ export const PaymentReminders = ({
             ) : (
               <Card className="glass-strong p-8 text-center">
                 <CheckCircle className="w-16 h-16 mx-auto mb-4 text-green-500" />
-                <h3 className="text-xl font-display mb-2">No payment reminders</h3>
-                <p className="text-muted-foreground">All caught up! No pending payments.</p>
+                <h3 className="text-xl font-display mb-2 text-foreground">No payment reminders</h3>
+                <p className="text-foreground/80">All caught up! No pending payments.</p>
               </Card>
             )
           ) : (
@@ -461,6 +462,7 @@ export const PaymentReminders = ({
                                     onMouseEnter={() => playHover()}
                                   >
                                     <Check className="w-3 h-3" />
+                                    <span className="sr-only text-foreground">Mark Paid</span>
                                   </Button>
                                 )}
                                 <Button
@@ -487,9 +489,9 @@ export const PaymentReminders = ({
               })
             ) : (
               <Card className="glass-strong p-8 text-center">
-                <Users className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
+                <Users className="w-16 h-16 mx-auto mb-4 text-foreground/50" />
                 <h3 className="text-xl font-display mb-2">No payment reminders by group</h3>
-                <p className="text-muted-foreground">No group-specific payment reminders found.</p>
+                <p className="text-foreground/80">No group-specific payment reminders found.</p>
               </Card>
             )
           )}

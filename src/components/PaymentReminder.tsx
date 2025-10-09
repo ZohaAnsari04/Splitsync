@@ -197,13 +197,13 @@ export const PaymentReminder = ({
                   <Check className="w-8 h-8 text-green-500" />
                 </div>
                 <h2 className="text-2xl font-display gradient-text">Payment Successful!</h2>
-                <p className="text-muted-foreground">₹{amount.toLocaleString()} paid to {creditorName}</p>
+                <p className="text-foreground/80">₹{amount.toLocaleString()} paid to {creditorName}</p>
               </div>
               
               <div className="glass p-4 rounded-lg text-center">
-                <p className="font-semibold mb-2">Transaction ID</p>
-                <p className="font-mono text-sm">TXN-{Date.now().toString().slice(-8)}</p>
-                <p className="text-xs text-muted-foreground mt-2">Amount will be reflected in your account shortly</p>
+                <p className="font-semibold mb-2 text-foreground">Transaction ID</p>
+                <p className="font-mono text-sm text-foreground/80">TXN-{Date.now().toString().slice(-8)}</p>
+                <p className="text-xs text-foreground/70 mt-2">Amount will be reflected in your account shortly</p>
               </div>
               
               <Button 
@@ -472,7 +472,7 @@ export const PaymentReminder = ({
 
           <div className="space-y-4">
             <div className="glass p-4 rounded-lg text-center">
-              <p className="text-lg font-semibold mb-2">
+              <p className="text-lg font-semibold mb-2 text-foreground">
                 {debtorName} owes {creditorName}
               </p>
               <p className="text-3xl font-bold gradient-text">₹{amount.toLocaleString()}</p>
@@ -482,7 +482,7 @@ export const PaymentReminder = ({
               <div className={`w-32 h-32 rounded-full bg-white/20 flex items-center justify-center mx-auto mb-4 border-2 border-white/30`}>
                 {randomMeme.icon}
               </div>
-              <p className="font-medium text-lg">{randomMeme.text}</p>
+              <p className="font-medium text-lg text-foreground">{randomMeme.text}</p>
             </Card>
 
             <div className="flex gap-3">
@@ -492,7 +492,7 @@ export const PaymentReminder = ({
                   playClick();
                   onDismiss();
                 }}
-                className="flex-1 glass py-6 text-lg font-display"
+                className="flex-1 glass py-6 text-lg font-display text-foreground"
                 onMouseEnter={() => playHover()}
               >
                 Later

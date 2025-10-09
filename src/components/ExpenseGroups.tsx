@@ -288,9 +288,9 @@ export const ExpenseGroups = ({
                     <GroupIcon className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="font-display text-lg font-semibold">{group.name}</h3>
+                    <h3 className="font-display text-lg font-semibold text-foreground">{group.name}</h3>
                     {group.description && (
-                      <p className="text-sm text-muted-foreground">{group.description}</p>
+                      <p className="text-sm text-foreground/80">{group.description}</p>
                     )}
                   </div>
                 </div>
@@ -331,22 +331,22 @@ export const ExpenseGroups = ({
                   <div className="text-2xl font-mono font-bold gradient-text">
                     {group.totalExpenses}
                   </div>
-                  <div className="text-xs text-muted-foreground">Expenses</div>
+                  <div className="text-xs text-foreground/80">Expenses</div>
                 </div>
                 <div className="glass p-3 rounded-lg text-center">
                   <TrendingUp className="w-5 h-5 mx-auto mb-1 text-secondary" />
                   <div className="text-2xl font-mono font-bold gradient-text">
                     {formatCurrency(group.totalAmount)}
                   </div>
-                  <div className="text-xs text-muted-foreground">Total</div>
+                  <div className="text-xs text-foreground/80">Total</div>
                 </div>
               </div>
 
               {/* Participants */}
               <div className="mb-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <Users className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground">
+                  <Users className="w-4 h-4 text-foreground/60" />
+                  <span className="text-sm text-foreground/80">
                     {group.participants.length} participants
                   </span>
                 </div>
@@ -376,7 +376,7 @@ export const ExpenseGroups = ({
                   onMouseEnter={() => playHover()}
                 >
                   <Eye className="w-4 h-4 mr-2" />
-                  View Details
+                  <span className="text-foreground">View Details</span>
                 </Button>
                 <Button
                   size="sm"
@@ -397,18 +397,18 @@ export const ExpenseGroups = ({
 
           {/* Empty State */}
           {groups.length === 0 && (
-            <Card className="glass-strong p-8 text-center col-span-full">
-              <GroupIcon className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
-              <h3 className="text-xl font-display mb-2">No Expense Groups Yet</h3>
-              <p className="text-muted-foreground mb-4">
-                Create your first expense group to start organizing your shared expenses
+            <Card className="glass-strong p-12 text-center col-span-full">
+              <GroupIcon className="w-16 h-16 mx-auto mb-4 text-foreground/30" />
+              <h3 className="text-xl font-display mb-2 text-foreground">No expense groups yet</h3>
+              <p className="text-foreground/80 mb-6">
+                Create your first expense group to start tracking shared expenses with friends or family.
               </p>
               <Button
+                className="glass-strong hover-scale"
                 onClick={() => {
                   playClick();
                   setShowCreateDialog(true);
                 }}
-                className="glass-strong hover-scale"
                 onMouseEnter={() => playHover()}
               >
                 <Plus className="w-5 h-5 mr-2" />
@@ -417,59 +417,6 @@ export const ExpenseGroups = ({
             </Card>
           )}
         </div>
-
-        {/* Edit Group Dialog */}
-        {editingGroup && (
-          <Dialog open={!!editingGroup} onOpenChange={() => setEditingGroup(null)}>
-            <DialogContent className="glass-strong">
-              <DialogHeader>
-                <DialogTitle className="gradient-text">Edit Group</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="editGroupName">Group Name</Label>
-                  <Input
-                    id="editGroupName"
-                    value={editingGroup.name}
-                    onChange={(e) => setEditingGroup({...editingGroup, name: e.target.value})}
-                    className="glass"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="editGroupDescription">Description</Label>
-                  <Textarea
-                    id="editGroupDescription"
-                    value={editingGroup.description || ""}
-                    onChange={(e) => setEditingGroup({...editingGroup, description: e.target.value})}
-                    className="glass"
-                    rows={3}
-                  />
-                </div>
-                <div className="flex gap-2 pt-4">
-                  <Button
-                    onClick={() => {
-                      onUpdateGroup(editingGroup.id, {
-                        name: editingGroup.name,
-                        description: editingGroup.description
-                      });
-                      setEditingGroup(null);
-                    }}
-                    className="flex-1 glass-strong hover-scale"
-                  >
-                    Update Group
-                  </Button>
-                  <Button
-                    variant="outline"
-                    onClick={() => setEditingGroup(null)}
-                    className="glass"
-                  >
-                    Cancel
-                  </Button>
-                </div>
-              </div>
-            </DialogContent>
-          </Dialog>
-        )}
       </div>
     </div>
   );
