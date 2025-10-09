@@ -6,8 +6,6 @@ import {
   Lock, 
   Key, 
   Database,
-  Upload,
-  Download,
   Eye,
   EyeOff,
   Smartphone,
@@ -139,12 +137,12 @@ export const SecurityPrivacy = ({ onBack }: { onBack: () => void }) => {
             <div className="w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center mx-auto mb-4">
               <Database className="w-6 h-6 text-purple-500" />
             </div>
-            <h3 className="font-semibold mb-2">Data Backup</h3>
+            <h3 className="font-semibold mb-2">Privacy Controls</h3>
             <Badge className="bg-purple-500/20 text-purple-500">
-              Automatic
+              Active
             </Badge>
             <p className="text-sm text-muted-foreground mt-2">
-              Last backup: 2 hours ago
+              Manage your privacy settings
             </p>
           </Card>
         </div>
@@ -202,7 +200,7 @@ export const SecurityPrivacy = ({ onBack }: { onBack: () => void }) => {
                 playClick();
                 setEncryptionEnabled(!encryptionEnabled);
               }}
-              className={encryptionEnabled ? "glass-strong" : "glass"}
+              className={`${encryptionEnabled ? "glass-strong" : "glass"} text-foreground border border-primary/30 hover:border-primary/60`}
               onMouseEnter={() => playHover()}
             >
               {encryptionEnabled ? "Encryption Active" : "Enable Encryption"}
@@ -273,109 +271,11 @@ export const SecurityPrivacy = ({ onBack }: { onBack: () => void }) => {
                 playClick();
                 setTwoFactorEnabled(!twoFactorEnabled);
               }}
-              className={twoFactorEnabled ? "glass-strong" : "glass"}
+              className={`${twoFactorEnabled ? "glass-strong" : "glass"} text-foreground border border-primary/30 hover:border-primary/60`}
               onMouseEnter={() => playHover()}
             >
               {twoFactorEnabled ? "Enabled" : "Enable 2FA"}
             </Button>
-          </div>
-        </Card>
-
-        {/* Data Backup & Restore */}
-        <Card className="glass-strong p-6 mb-8 hover-scale">
-          <div className="flex items-center gap-3 mb-4">
-            <Database className="w-8 h-8 text-accent" />
-            <h2 className="text-xl font-display gradient-text">Data Backup & Restore</h2>
-          </div>
-          <p className="text-muted-foreground mb-6">
-            Automatically backup your data and restore it when needed.
-          </p>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <h3 className="font-semibold mb-3 flex items-center gap-2">
-                <Upload className="w-5 h-5" />
-                Backup Data
-              </h3>
-              <div className="space-y-3">
-                <div className="p-3 glass rounded">
-                  <div className="flex justify-between">
-                    <span>Automatic Backups</span>
-                    <Badge className="bg-green-500/20 text-green-500">Enabled</Badge>
-                  </div>
-                  <div className="text-sm text-muted-foreground mt-1">
-                    Daily backups at 2:00 AM
-                  </div>
-                </div>
-                
-                <div className="p-3 glass rounded">
-                  <div className="flex justify-between mb-2">
-                    <span>Last Backup</span>
-                    <span>2 hours ago</span>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button 
-                      size="sm" 
-                      className="flex-1 glass-strong"
-                      onClick={() => playClick()}
-                      onMouseEnter={() => playHover()}
-                    >
-                      Backup Now
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div>
-              <h3 className="font-semibold mb-3 flex items-center gap-2">
-                <Download className="w-5 h-5" />
-                Restore Data
-              </h3>
-              <div className="space-y-3">
-                <div className="p-3 glass rounded">
-                  <div className="mb-2">
-                    <span>Available Backups</span>
-                  </div>
-                  <div className="space-y-2">
-                    <div 
-                      className="flex justify-between text-sm cursor-pointer hover-scale p-1 rounded"
-                      onClick={() => playClick()}
-                      onMouseEnter={() => playHover()}
-                    >
-                      <span>June 15, 2024</span>
-                      <span>15.2 MB</span>
-                    </div>
-                    <div 
-                      className="flex justify-between text-sm cursor-pointer hover-scale p-1 rounded"
-                      onClick={() => playClick()}
-                      onMouseEnter={() => playHover()}
-                    >
-                      <span>June 14, 2024</span>
-                      <span>14.8 MB</span>
-                    </div>
-                    <div 
-                      className="flex justify-between text-sm cursor-pointer hover-scale p-1 rounded"
-                      onClick={() => playClick()}
-                      onMouseEnter={() => playHover()}
-                    >
-                      <span>June 13, 2024</span>
-                      <span>14.5 MB</span>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="p-3 glass rounded">
-                  <Button 
-                    className="w-full glass-strong"
-                    onClick={() => playClick()}
-                    onMouseEnter={() => playHover()}
-                  >
-                    Restore Selected Backup
-                  </Button>
-                </div>
-              </div>
-            </div>
           </div>
         </Card>
 
@@ -411,7 +311,7 @@ export const SecurityPrivacy = ({ onBack }: { onBack: () => void }) => {
                     playClick();
                     togglePrivacySetting(setting.id);
                   }}
-                  className={setting.enabled ? "glass-strong" : "glass"}
+                  className={`${setting.enabled ? "glass-strong" : "glass"} text-foreground border border-primary/30 hover:border-primary/60`}
                   onMouseEnter={() => playHover()}
                 >
                   {setting.enabled ? "Enabled" : "Disabled"}
