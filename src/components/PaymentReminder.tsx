@@ -229,7 +229,7 @@ export const PaymentReminder = ({
               playClick();
               setShowPaymentScreen(false);
             }}
-            className="absolute top-4 right-4 z-10 glass"
+            className="absolute top-4 right-4 z-10 glass text-foreground"
             onMouseEnter={() => playHover()}
           >
             <X className="w-5 h-5" />
@@ -241,12 +241,12 @@ export const PaymentReminder = ({
                 <Zap className="w-8 h-8 text-primary" />
               </div>
               <h2 className="text-2xl font-display gradient-text">Pay Now</h2>
-              <p className="text-muted-foreground">Secure UPI Payment</p>
+              <p className="text-foreground/80">Secure UPI Payment</p>
             </div>
 
             <div className="space-y-6">
               <div className="glass p-4 rounded-lg text-center">
-                <p className="text-lg font-semibold mb-2">
+                <p className="text-lg font-semibold mb-2 text-foreground">
                   {debtorName} owes {creditorName}
                 </p>
                 <p className="text-3xl font-bold gradient-text">₹{amount.toLocaleString()}</p>
@@ -254,11 +254,11 @@ export const PaymentReminder = ({
 
               {/* Payment Method Selection */}
               <div className="glass p-4 rounded-lg">
-                <h3 className="font-semibold mb-3">Payment Method</h3>
+                <h3 className="font-semibold mb-3 text-foreground">Payment Method</h3>
                 <div className="grid grid-cols-3 gap-2">
                   <Button 
                     variant={paymentMethod === "upi" ? "default" : "outline"}
-                    className={`flex flex-col items-center justify-center h-20 ${paymentMethod === "upi" ? "glass-strong" : "glass"}`}
+                    className={`flex flex-col items-center justify-center h-20 ${paymentMethod === "upi" ? "glass-strong" : "glass"} text-foreground`}
                     onClick={() => {
                       playClick();
                       setPaymentMethod("upi");
@@ -269,7 +269,7 @@ export const PaymentReminder = ({
                   </Button>
                   <Button 
                     variant={paymentMethod === "qr" ? "default" : "outline"}
-                    className={`flex flex-col items-center justify-center h-20 ${paymentMethod === "qr" ? "glass-strong" : "glass"}`}
+                    className={`flex flex-col items-center justify-center h-20 ${paymentMethod === "qr" ? "glass-strong" : "glass"} text-foreground`}
                     onClick={() => {
                       playClick();
                       setPaymentMethod("qr");
@@ -280,7 +280,7 @@ export const PaymentReminder = ({
                   </Button>
                   <Button 
                     variant={paymentMethod === "bank" ? "default" : "outline"}
-                    className={`flex flex-col items-center justify-center h-20 ${paymentMethod === "bank" ? "glass-strong" : "glass"}`}
+                    className={`flex flex-col items-center justify-center h-20 ${paymentMethod === "bank" ? "glass-strong" : "glass"} text-foreground`}
                     onClick={() => {
                       playClick();
                       setPaymentMethod("bank");
@@ -295,20 +295,20 @@ export const PaymentReminder = ({
               {/* UPI ID Input */}
               {paymentMethod === "upi" && (
                 <div className="glass p-4 rounded-lg">
-                  <h3 className="font-semibold mb-3">Pay with UPI ID</h3>
+                  <h3 className="font-semibold mb-3 text-foreground">Pay with UPI ID</h3>
                   <div className="space-y-3">
                     <div>
-                      <label className="text-sm text-muted-foreground mb-1 block">Recipient's UPI ID</label>
+                      <label className="text-sm text-foreground/80 mb-1 block">Recipient's UPI ID</label>
                       <div className="flex gap-2">
                         <Input 
                           value="alice@upi"
                           readOnly
-                          className="flex-1 glass"
+                          className="flex-1 glass text-foreground"
                         />
                         <Button 
                           size="icon"
                           variant="outline"
-                          className="glass"
+                          className="glass text-foreground"
                           onClick={copyToClipboard}
                         >
                           {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
@@ -317,16 +317,16 @@ export const PaymentReminder = ({
                     </div>
                     
                     <div>
-                      <label className="text-sm text-muted-foreground mb-1 block">Your UPI ID</label>
+                      <label className="text-sm text-foreground/80 mb-1 block">Your UPI ID</label>
                       <Input 
                         placeholder="you@upi"
                         value={upiId}
                         onChange={(e) => setUpiId(e.target.value)}
-                        className="glass"
+                        className="glass text-foreground"
                       />
                     </div>
                     
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-2 text-sm text-foreground/70">
                       <Shield className="w-4 h-4" />
                       <span>Secured with AES-256 encryption</span>
                     </div>
@@ -337,7 +337,7 @@ export const PaymentReminder = ({
               {/* QR Code */}
               {paymentMethod === "qr" && (
                 <div className="glass p-4 rounded-lg">
-                  <h3 className="font-semibold mb-3">Scan QR Code</h3>
+                  <h3 className="font-semibold mb-3 text-foreground">Scan QR Code</h3>
                   <div className="flex flex-col items-center">
                     <div className="bg-white p-4 rounded-lg mb-4">
                       <div className="grid grid-cols-4 gap-1 w-48 h-48">
@@ -351,7 +351,7 @@ export const PaymentReminder = ({
                         ))}
                       </div>
                     </div>
-                    <p className="text-sm text-muted-foreground mb-3">Scan this QR code with any UPI app</p>
+                    <p className="text-sm text-foreground/80 mb-3">Scan this QR code with any UPI app</p>
                     <Button 
                       variant="outline" 
                       className="glass"
@@ -370,25 +370,25 @@ export const PaymentReminder = ({
               {/* Bank Transfer */}
               {paymentMethod === "bank" && (
                 <div className="glass p-4 rounded-lg">
-                  <h3 className="font-semibold mb-3">Bank Transfer</h3>
+                  <h3 className="font-semibold mb-3 text-foreground">Bank Transfer</h3>
                   <div className="space-y-3">
                     <div className="flex items-center gap-3 p-3 glass rounded">
                       <CreditCardIcon className="w-8 h-8 text-primary" />
                       <div>
-                        <p className="font-medium">HDFC Bank</p>
-                        <p className="text-sm text-muted-foreground">**** 4832</p>
+                        <p className="font-medium text-foreground">HDFC Bank</p>
+                        <p className="text-sm text-foreground/80">**** 4832</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3 p-3 glass rounded">
                       <Banknote className="w-8 h-8 text-secondary" />
                       <div>
-                        <p className="font-medium">ICICI Bank</p>
-                        <p className="text-sm text-muted-foreground">**** 7291</p>
+                        <p className="font-medium text-foreground">ICICI Bank</p>
+                        <p className="text-sm text-foreground/80">**** 7291</p>
                       </div>
                     </div>
                     <Button 
                       variant="outline" 
-                      className="w-full glass"
+                      className="w-full glass text-foreground"
                       onClick={() => {
                         playClick();
                         alert("In a real app, this would open your banking app");
@@ -423,7 +423,7 @@ export const PaymentReminder = ({
                 <div className="grid grid-cols-2 gap-2">
                   <Button 
                     variant="outline" 
-                    className="glass hover-scale"
+                    className="glass hover-scale text-foreground"
                     onClick={() => {
                       playClick();
                       setShowPaymentScreen(false);
@@ -433,7 +433,7 @@ export const PaymentReminder = ({
                   </Button>
                   <Button 
                     variant="outline" 
-                    className="glass hover-scale"
+                    className="glass hover-scale text-foreground"
                     onClick={() => playClick()}
                   >
                     Pay Later
@@ -458,7 +458,7 @@ export const PaymentReminder = ({
             playClick();
             onDismiss();
           }}
-          className="absolute top-4 right-4 z-10 glass"
+          className="absolute top-4 right-4 z-10 glass text-foreground"
           onMouseEnter={() => playHover()}
         >
           <X className="w-5 h-5" />
