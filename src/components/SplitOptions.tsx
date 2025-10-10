@@ -295,41 +295,7 @@ export const SplitOptions = ({ totalAmount, participants }: SplitOptionsProps) =
             </div>
           </div>
 
-          {/* Recurring Expense Templates */}
-          <div className="glass p-4 rounded-lg border border-primary/30">
-            <div className="flex items-center gap-2 mb-4">
-              <Calendar className="w-5 h-5 text-primary animate-pulse" />
-              <span className="font-semibold">Recurring Templates</span>
-            </div>
-            <p className="text-sm text-muted-foreground mb-3">
-              Create templates for regular expenses like rent, subscriptions, etc.
-            </p>
-            <Button className="glass-strong hover-scale text-foreground" onClick={() => playClick()} onMouseEnter={() => playHover()}>
-              Create Recurring Template
-            </Button>
-          </div>
 
-          {/* Currency Conversion */}
-          <div className="glass p-4 rounded-lg border border-purple-500/30">
-            <div className="flex items-center gap-2 mb-4">
-              <Globe className="w-5 h-5 text-purple-500 animate-pulse" />
-              <span className="font-semibold">Currency Conversion</span>
-            </div>
-            <p className="text-sm text-muted-foreground mb-3">
-              Split expenses across different currencies for international groups
-            </p>
-            <div className="flex gap-2">
-              <select className="flex-1 glass p-2 rounded border border-purple-500/30 focus:border-purple-500/60 outline-none" onChange={() => playClick()}>
-                <option>INR (₹)</option>
-                <option>USD ($)</option>
-                <option>EUR (€)</option>
-                <option>GBP (£)</option>
-              </select>
-              <Button className="glass-strong hover-scale" onClick={() => playClick()} onMouseEnter={() => playHover()}>
-                Convert
-              </Button>
-            </div>
-          </div>
         </div>
       </TabsContent>
     </Tabs>
