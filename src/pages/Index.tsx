@@ -557,18 +557,24 @@ const Index = () => {
         expenseGroups={expenseGroups}
       />
       {currentView !== "splash" && (
-        <NavigationMenu
-          onViewDashboard={navigateToDashboard}
-          onViewAnalytics={navigateToAnalytics}
-          onViewGamification={navigateToGamification}
-          onViewFinancialInsights={navigateToFinancialInsights}
-          onViewEnhancedUI={navigateToEnhancedUI}
-          onViewAdvancedGamification={navigateToAdvancedGamification}
-          onViewSecurityPrivacy={navigateToSecurityPrivacy}
-          onViewAccessibilityImprovements={navigateToAccessibilityImprovements}
-          onViewExpenseGroups={navigateToExpenseGroups}
-          onViewPaymentReminders={navigateToPaymentReminders}
-        />
+        <>
+          <NavigationMenu
+            onViewDashboard={navigateToDashboard}
+            onViewAnalytics={navigateToAnalytics}
+            onViewGamification={navigateToGamification}
+            onViewFinancialInsights={navigateToFinancialInsights}
+            onViewEnhancedUI={navigateToEnhancedUI}
+            onViewAdvancedGamification={navigateToAdvancedGamification}
+            onViewSecurityPrivacy={navigateToSecurityPrivacy}
+            onViewAccessibilityImprovements={navigateToAccessibilityImprovements}
+            onViewExpenseGroups={navigateToExpenseGroups}
+            onViewPaymentReminders={navigateToPaymentReminders}
+          />
+          {/* Footer */}
+          <footer className="py-4 text-center text-sm text-muted-foreground">
+            Designed and Developed by Zoha
+          </footer>
+        </>
       )}
     </>
   );
