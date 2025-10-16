@@ -572,7 +572,7 @@ const Index = () => {
           />
           {/* Footer */}
           <footer className="py-4 text-center text-sm text-muted-foreground">
-            Designed and Developed by Zoha
+            Designed and Developed by Zoha Ansari
           </footer>
         </>
       )}
