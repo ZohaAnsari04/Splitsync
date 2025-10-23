@@ -4,6 +4,8 @@
 
 SplitSync is a modern, Web3-inspired expense splitting application that simplifies shared expense management with AI-powered categorization, real-time settlement tracking, and an engaging user experience. Built with React, TypeScript, and Tailwind CSS, SplitSync offers a sleek glassmorphism UI with neon glow effects, responsive design, and comprehensive financial tracking features.
 
+📁 **Additional Resources**: [Project Logic and Video Pitch](https://drive.google.com/drive/u/1/folders/1rb2tlk_shQ66JCiw-q_HLCqFLOvJZg-u)
+
 ## Table of Contents
 
 - [Features](#features)
